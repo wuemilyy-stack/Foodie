@@ -615,7 +615,7 @@ async function sendCode(email, name, marketing) {
   } catch (e) { error = { message: 'network' }; }
   auth.busy = false;
   if (error && isRateLimited(error)) auth.msg = { err: true, text: 'Too many code requests. Wait a minute, then try again.' };
-  else if (error) auth.msg = { err: true, text: 'We couldn\u2019t send a code just now. Check your connection and the address, then try again.' };
+  else if (error) { console.warn('FoodiePass sign-in error', error); auth.msg = { err: true, text: (error.message === 'network' || /fetch|network|load failed/i.test(error.message || '') || error.status === 0) ? 'We couldn\u2019t reach our sign-in service from this page. If you\u2019re viewing a preview, open the live FoodiePass site to create your account. Otherwise check your connection and try again.' : 'We couldn\u2019t send the ' + (AUTH_CONFIG.emailMode === 'link' ? 'sign-in email' : 'code') + ' just now. Check the address and try again in a minute.' }; }
   else { auth.step = 'code'; auth.email = email; auth.cooldownUntil = Date.now() + AUTH_CONFIG.resendSeconds * 1000; auth.msg = { text: 'If ' + email + ' can receive email, ' + (AUTH_CONFIG.emailMode === 'link' ? 'a sign-in link' : 'a code') + ' is on its way. It expires in 10 minutes. Check spam if you don\u2019t see it.' }; }
   renderAuth();
   const next = document.getElementById(auth.step === 'code' ? 'authCode' : 'authEmail'); if (next) next.focus();
