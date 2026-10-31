@@ -1,0 +1,6 @@
+netlify-deploy/index.html
+foodiepass-netlify.zip
+.env
+.env.*
+supabase/.temp/
+node_modules/

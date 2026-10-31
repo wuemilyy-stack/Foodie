@@ -1,0 +1,30 @@
+# Function settings. Protected functions check the user token themselves (requireUser),
+# so the gateway JWT check is only kept where it adds nothing harmful.
+
+[functions.billing-config]
+verify_jwt = false   # public
+
+[functions.billing-webhook]
+verify_jwt = false   # Stripe calls it; protected by the Stripe signature
+
+[functions.billing-reconcile]
+verify_jwt = false   # cron calls it; protected by the x-cron-secret header
+
+[functions.billing-checkout]
+verify_jwt = true
+
+[functions.billing-portal]
+verify_jwt = true
+
+[functions.billing-status]
+verify_jwt = true
+
+[functions.gift-redeem]
+verify_jwt = true
+
+[functions.account-delete]
+verify_jwt = true
+
+[auth.email]
+otp_expiry = 600
+otp_length = 6

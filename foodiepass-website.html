@@ -1,0 +1,1198 @@
+<meta charset="utf-8">
+<title>FoodiePass</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=DM+Sans:wght@400..700&display=swap">
+<style>
+/* Layout: sticky brand header; hash-routed pages (home, how, restaurants, join, pass, partners, faq, conduct); finder = filters | list | map, stacking on phones. */
+:root {
+  --linen: #F6F4EF;   /* main ground */
+  --sand: #EDE8DE;    /* second ground */
+  --card: #FFFDF8;
+  --bayou: #172A2A;   /* text + dark ground */
+  --bayou-2: #21393A;
+  --chili: #E2552B;   /* mark, highlights */
+  --mustard: #F2B134; /* accent on dark */
+  --brick: #B5401C;   /* small accent text on light */
+  --ink-2: #4A5857;
+  --muted: #5C6968;
+  --line: #E2DDD2;
+  --mint: #BFD3CF;    /* body text on dark */
+  --ok: #2F6B4C;
+  --f-display: 'Bricolage Grotesque', 'Arial Black', Arial, sans-serif;
+  --f-body: 'DM Sans', 'Segoe UI', Arial, sans-serif;
+  --r: 20px;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--linen); color: var(--bayou); }
+body { font-family: var(--f-body); font-size: 17px; line-height: 1.5; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 800; letter-spacing: -0.02em; line-height: 1.05; margin: 0; text-wrap: balance; }
+p { margin: 0; }
+a { color: var(--brick); }
+a:hover { color: #8F3215; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--chili); outline-offset: 2px; border-radius: 6px; }
+.wrap { max-width: 1200px; margin: 0 auto; padding-inline: 20px; }
+.eyebrow { font-size: 14px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--brick); }
+.on-dark .eyebrow { color: var(--mustard); }
+.muted { color: var(--muted); }
+.small { font-size: 14px; }
+.tabular { font-variant-numeric: tabular-nums; }
+[hidden] { display: none !important; }
+
+/* Header */
+.hdr { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 1000; background: var(--linen); border-bottom: 1px solid var(--line); }
+.hdr-in { display: flex; align-items: center; gap: 20px; padding-block: 12px; flex-wrap: wrap; }
+.logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--bayou); font-family: var(--f-display); font-weight: 800; font-size: 24px; letter-spacing: -0.02em; }
+.logo:hover { color: var(--bayou); }
+.logo b { color: var(--chili); font-weight: 800; }
+.nav { display: flex; gap: 4px; flex: 1; flex-wrap: wrap; }
+.nav a { text-decoration: none; color: var(--ink-2); font-weight: 600; padding: 8px 12px; border-radius: 999px; }
+.nav a:hover { background: var(--sand); color: var(--bayou); }
+.nav a.on { background: var(--bayou); color: var(--linen); }
+.hdr-cta { display: flex; gap: 8px; align-items: center; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 20px; border-radius: 999px; border: 2px solid var(--bayou); background: transparent; color: var(--bayou); font-weight: 700; text-decoration: none; cursor: pointer; }
+.btn:hover { background: var(--sand); color: var(--bayou); }
+.btn.pri { background: var(--chili); border-color: var(--chili); color: var(--bayou); }
+.btn.pri:hover { background: #EB6A42; border-color: #EB6A42; }
+.btn.dark { background: var(--bayou); border-color: var(--bayou); color: var(--linen); }
+.btn.dark:hover { background: var(--bayou-2); color: var(--linen); }
+.btn.ghost-light { border-color: var(--mint); color: var(--linen); }
+.btn.ghost-light:hover { background: var(--bayou-2); color: var(--linen); }
+.btn.sm { min-height: 36px; padding: 6px 14px; font-size: 15px; }
+
+/* Sections */
+section { padding-block: 72px; }
+.dark { background: var(--bayou); color: var(--linen); }
+.sand { background: var(--sand); }
+.sec-head { display: flex; flex-direction: column; gap: 10px; margin-bottom: 36px; max-width: 760px; }
+.sec-head h2 { font-size: clamp(34px, 4.4vw, 52px); }
+.sec-head p { font-size: 19px; color: var(--ink-2); }
+.dark .sec-head p { color: var(--mint); }
+
+/* Hero */
+.hero { background: var(--bayou); color: var(--linen); overflow: hidden; position: relative; padding-block: 80px 88px; }
+.hero::after { content: ''; position: absolute; right: -160px; top: -200px; width: 640px; height: 640px; border-radius: 50%; background: var(--bayou-2); }
+.hero-in { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr); gap: 56px; align-items: center; }
+.hero h1 { font-size: clamp(44px, 6.4vw, 84px); line-height: 0.98; }
+.hero h1 span { color: var(--mustard); }
+.hero p.lede { font-size: 21px; color: var(--mint); max-width: 34ch; margin-top: 22px; }
+.hero .ctas { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 30px; align-items: center; }
+.hero .ctas a.link { color: var(--mustard); font-weight: 700; }
+
+/* Pass card */
+.pass { background: var(--linen); color: var(--bayou); border-radius: 28px; padding: 28px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 30px 60px rgba(0,0,0,0.35); max-width: 400px; width: 100%; justify-self: center; }
+.hero .pass { transform: rotate(3deg); }
+.pass-top { display: flex; justify-content: space-between; align-items: center; }
+.pass-live { color: var(--ok); font-weight: 700; font-size: 14px; }
+.pass-name { font-family: var(--f-display); font-weight: 800; font-size: 34px; letter-spacing: -0.02em; }
+.pass-row { display: flex; justify-content: space-between; gap: 16px; border-top: 2px dashed #D9D2C4; padding-top: 16px; }
+.pass-row .k { font-size: 13px; color: var(--muted); }
+.pass-row .v { font-size: 19px; font-weight: 700; }
+.pass-clock { font-family: var(--f-display); font-size: 44px; font-weight: 800; text-align: center; letter-spacing: -0.02em; padding: 10px; border-radius: 16px; background: var(--sand); }
+.pulse { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--ok); margin-right: 6px; }
+@media (prefers-reduced-motion: no-preference) { .pulse { animation: pulse 1.6s ease-in-out infinite; } @keyframes pulse { 50% { opacity: 0.25; } } }
+
+/* Grids, cards */
+.grid { display: grid; gap: 20px; }
+.g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.g4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 28px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.card h3 { font-size: 26px; }
+.card p { color: var(--ink-2); }
+.dark .card { background: var(--bayou-2); border-color: #2C4847; }
+.dark .card p { color: var(--mint); }
+.step-n { font-family: var(--f-display); font-size: 56px; font-weight: 800; color: var(--chili); line-height: 1; }
+.dark .step-n { color: var(--mustard); }
+.stat { font-family: var(--f-display); font-size: 64px; font-weight: 800; line-height: 1; color: var(--bayou); letter-spacing: -0.03em; }
+.band { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); gap: 40px; align-items: center; }
+
+/* Finder */
+.finder-hero { padding-block: 48px 28px; }
+.finder-hero h1 { font-size: clamp(38px, 5vw, 60px); }
+.searchbar { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 22px; }
+.searchbar input { flex: 1 1 280px; min-height: 52px; padding: 12px 18px; border: 2px solid var(--bayou); border-radius: 999px; background: var(--card); font-size: 18px; }
+.finder { display: grid; grid-template-columns: 260px minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; padding-bottom: 72px; }
+.panel { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 20px; display: flex; flex-direction: column; gap: 18px; position: sticky; top: 86px; }
+.panel h3 { font-size: 15px; font-family: var(--f-body); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--brick); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { min-height: 36px; padding: 6px 13px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--card); font-size: 14px; font-weight: 600; cursor: pointer; color: var(--bayou); }
+.chip:hover { border-color: var(--bayou); }
+.chip.on { background: var(--bayou); border-color: var(--bayou); color: var(--linen); }
+.chip .soon { font-weight: 500; opacity: 0.75; }
+.seg { display: inline-flex; background: var(--sand); border-radius: 999px; padding: 4px; gap: 4px; }
+.seg button { border: 0; background: transparent; padding: 8px 18px; border-radius: 999px; font-weight: 700; cursor: pointer; min-height: 40px; color: var(--ink-2); }
+.seg button.on { background: var(--bayou); color: var(--linen); }
+select.inp { width: 100%; min-height: 44px; padding: 8px 12px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--card); }
+.legend { display: grid; gap: 8px; font-size: 14px; color: var(--ink-2); }
+.legend div { display: flex; align-items: center; gap: 10px; }
+.results-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.list { display: grid; gap: 14px; }
+.rc { background: var(--card); border: 1.5px solid var(--line); border-radius: var(--r); padding: 18px 20px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.rc.hl { border-color: var(--chili); }
+.rc-top { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+.rc h3 { font-size: 23px; }
+.rc .meta { display: flex; gap: 14px; flex-wrap: wrap; font-size: 14px; color: var(--muted); }
+.rc .meta span { display: inline-flex; align-items: center; gap: 6px; }
+.offer { display: inline-flex; align-self: flex-start; gap: 8px; align-items: center; background: var(--sand); border-radius: 12px; padding: 8px 12px; font-weight: 700; font-size: 15px; }
+.badges { display: flex; gap: 6px; flex-wrap: wrap; }
+.badge { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--linen); color: var(--ink-2); }
+.badge.new { background: #FCE7DF; border-color: #F4C2AF; color: #8F3215; }
+.badge.fp { background: #FBEBC4; border-color: #F2D489; color: #5E4205; }
+.rc-actions { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.sample { font-size: 12px; color: var(--muted); }
+.mapbox { position: sticky; top: 86px; height: calc(100vh - 120px); min-height: 460px; border-radius: var(--r); overflow: hidden; border: 1px solid var(--line); background: var(--sand); }
+#map { width: 100%; height: 100%; }
+.map-note { position: absolute; left: 12px; bottom: 12px; z-index: 500; background: rgba(23,42,42,0.88); color: var(--linen); font-size: 13px; padding: 6px 12px; border-radius: 999px; }
+.pin { width: 22px; height: 22px; border-radius: 50%; background: var(--chili); border: 3px solid var(--card); box-shadow: 0 2px 6px rgba(0,0,0,0.35); }
+.pin.fp { border-color: var(--mustard); }
+.pin.hot { transform: scale(1.35); background: var(--bayou); }
+.dlabel { background: transparent; border: 0; box-shadow: none; font-family: var(--f-display); font-weight: 800; font-size: 13px; color: var(--bayou); text-shadow: 0 0 3px var(--linen), 0 0 3px var(--linen); white-space: nowrap; }
+.filters-toggle { display: none; }
+
+/* Drawer (restaurant detail) */
+.scrim { position: fixed; inset: 0; background: rgba(23,42,42,0.55); z-index: 2000; display: flex; justify-content: flex-end; }
+.drawer { width: min(520px, 100%); height: 100%; background: var(--linen); padding: 32px 28px; overflow-y: auto; display: flex; flex-direction: column; gap: 18px; padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px)); }
+.drawer h2 { font-size: 40px; }
+.x { align-self: flex-end; border: 0; background: var(--sand); width: 44px; height: 44px; border-radius: 50%; cursor: pointer; font-size: 22px; line-height: 1; }
+
+/* Join */
+.plans { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+.plan { background: var(--card); border: 1.5px solid var(--line); border-radius: var(--r); padding: 26px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.plan.feature { border: 3px solid var(--chili); }
+.plan .price { font-family: var(--f-display); font-weight: 800; font-size: 48px; line-height: 1; }
+.plan .price small { font-family: var(--f-body); font-size: 16px; font-weight: 600; color: var(--muted); }
+.plan ul { margin: 0; padding-left: 20px; color: var(--ink-2); display: grid; gap: 6px; }
+.plan .btn { margin-top: auto; }
+form.stack { display: grid; gap: 14px; }
+label.f { display: grid; gap: 6px; font-weight: 600; font-size: 15px; }
+label.f input, label.f select, label.f textarea { min-height: 48px; padding: 10px 14px; border-radius: 12px; border: 1.5px solid #CFC7B8; background: var(--card); font-size: 17px; }
+.note { background: var(--sand); border-radius: 14px; padding: 14px 16px; font-size: 15px; color: var(--ink-2); }
+.note.ok { background: #DDEFE3; color: #1F4D35; }
+
+/* FAQ */
+details { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px 22px; }
+details + details { margin-top: 12px; }
+summary { cursor: pointer; font-weight: 700; font-size: 19px; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: '+'; font-family: var(--f-display); font-size: 26px; line-height: 1; color: var(--chili); }
+details[open] summary::after { content: '\2013 '; }
+details p { margin-top: 10px; color: var(--ink-2); max-width: 70ch; }
+
+/* Newsletter */
+.insider { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; background: var(--chili); color: var(--bayou); border-radius: 28px; padding: 36px 40px; }
+.insider h3 { font-size: 34px; }
+.insider form { display: flex; gap: 10px; flex: 1 1 360px; max-width: 520px; flex-wrap: wrap; }
+.insider input { flex: 1 1 220px; min-height: 52px; border-radius: 999px; border: 2px solid var(--bayou); padding: 10px 18px; background: var(--card); }
+
+/* Footer */
+footer { background: var(--bayou); color: var(--mint); padding-block: 56px calc(40px + env(safe-area-inset-bottom, 0px)); }
+.foot { display: grid; grid-template-columns: minmax(0, 1.3fr) repeat(3, minmax(0, 1fr)); gap: 32px; }
+footer h4 { margin: 0 0 12px; color: var(--linen); font-size: 15px; letter-spacing: 0.12em; text-transform: uppercase; }
+footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+footer a { color: var(--mint); text-decoration: none; }
+footer a:hover { color: var(--linen); text-decoration: underline; }
+.social { display: flex; gap: 10px; margin-top: 16px; }
+.social a { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid #3B5756; display: inline-flex; align-items: center; justify-content: center; }
+.foot-bottom { border-top: 1px solid #2C4847; margin-top: 40px; padding-top: 20px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 14px; }
+
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); background: var(--bayou); color: var(--linen); padding: 12px 20px; border-radius: 999px; font-weight: 600; z-index: 3000; max-width: calc(100% - 32px); }
+
+@media (max-width: 1080px) {
+  .finder { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .panel { grid-column: 1 / -1; position: static; }
+  .plans { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  section { padding-block: 52px; }
+  .hero-in, .band, .g3, .g4, .g2, .foot, .plans { grid-template-columns: 1fr; }
+  .hero .pass { transform: none; }
+  .finder { grid-template-columns: 1fr; }
+  .mapbox { position: relative; top: 0; height: 340px; min-height: 0; order: -1; }
+  .filters-toggle { display: inline-flex; }
+  .panel.collapsed { display: none; }
+  .insider { padding: 28px 22px; }
+  .nav { order: 3; flex-basis: 100%; overflow-x: auto; flex-wrap: nowrap; }
+  .nav a { white-space: nowrap; }
+}
+
+/* Leaflet 1.9.4 core CSS (inlined; image-based rules removed) */
+.leaflet-image-layer,.leaflet-layer,.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-pane,.leaflet-pane>canvas,.leaflet-pane>svg,.leaflet-tile,.leaflet-tile-container,.leaflet-zoom-box{position:absolute;left:0;top:0}.leaflet-container{overflow:hidden}.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-tile{-webkit-user-select:none;-moz-user-select:none;user-select:none;-webkit-user-drag:none}.leaflet-tile::selection{background:0 0}.leaflet-marker-icon,.leaflet-marker-shadow{display:block}.leaflet-container .leaflet-overlay-pane svg{max-width:none!important;max-height:none!important}.leaflet-container .leaflet-marker-pane img,.leaflet-container .leaflet-shadow-pane img,.leaflet-container .leaflet-tile,.leaflet-container .leaflet-tile-pane img,.leaflet-container img.leaflet-image-layer{max-width:none!important;max-height:none!important;width:auto;padding:0}.leaflet-container.leaflet-touch-zoom{touch-action:pan-x pan-y}.leaflet-container.leaflet-touch-drag{touch-action:pinch-zoom}.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom{touch-action:none}.leaflet-container{-webkit-tap-highlight-color:transparent}.leaflet-tile{filter:inherit;visibility:hidden}.leaflet-tile-loaded{visibility:inherit}.leaflet-zoom-box{width:0;height:0;box-sizing:border-box;z-index:800}.leaflet-pane{z-index:400}.leaflet-tile-pane{z-index:200}.leaflet-overlay-pane{z-index:400}.leaflet-shadow-pane{z-index:500}.leaflet-marker-pane{z-index:600}.leaflet-tooltip-pane{z-index:650}.leaflet-popup-pane{z-index:700}.leaflet-map-pane canvas{z-index:100}.leaflet-map-pane svg{z-index:200}.leaflet-control{position:relative;z-index:800;pointer-events:auto}.leaflet-bottom,.leaflet-top{position:absolute;z-index:1000;pointer-events:none}.leaflet-top{top:0}.leaflet-right{right:0}.leaflet-bottom{bottom:0}.leaflet-left{left:0}.leaflet-control{float:left;clear:both}.leaflet-right .leaflet-control{float:right}.leaflet-top .leaflet-control{margin-top:10px}.leaflet-bottom .leaflet-control{margin-bottom:10px}.leaflet-left .leaflet-control{margin-left:10px}.leaflet-right .leaflet-control{margin-right:10px}.leaflet-zoom-animated{transform-origin:0 0}svg.leaflet-zoom-animated{will-change:transform}.leaflet-zoom-anim .leaflet-zoom-animated{transition:transform .25s cubic-bezier(0,0,.25,1)}.leaflet-pan-anim .leaflet-tile,.leaflet-zoom-anim .leaflet-tile{transition:none}.leaflet-zoom-anim .leaflet-zoom-hide{visibility:hidden}.leaflet-interactive{cursor:pointer}.leaflet-grab{cursor:grab}.leaflet-dragging .leaflet-grab,.leaflet-dragging .leaflet-grab .leaflet-interactive{cursor:grabbing}.leaflet-image-layer,.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-pane>svg path,.leaflet-tile-container{pointer-events:none}.leaflet-image-layer.leaflet-interactive,.leaflet-marker-icon.leaflet-interactive,.leaflet-pane>svg path.leaflet-interactive{pointer-events:auto}.leaflet-container{background:#EDE8DE;outline-offset:1px;font-family:var(--f-body)}.leaflet-bar{box-shadow:0 1px 5px rgba(0,0,0,.35);border-radius:10px}.leaflet-bar a{background-color:#FFFDF8;border-bottom:1px solid #E2DDD2;width:36px;height:36px;line-height:36px;display:block;text-align:center;text-decoration:none;color:#172A2A;font-weight:700}.leaflet-bar a:first-child{border-top-left-radius:10px;border-top-right-radius:10px}.leaflet-bar a:last-child{border-bottom-left-radius:10px;border-bottom-right-radius:10px;border-bottom:none}.leaflet-bar a:hover{background-color:#EDE8DE}.leaflet-control-zoom-in,.leaflet-control-zoom-out{font:bold 20px 'DM Sans',Arial,sans-serif}.leaflet-container .leaflet-control-attribution{background:rgba(255,253,248,.85);margin:0;font-size:11px}.leaflet-control-attribution{padding:0 5px;color:#4A5857}.leaflet-control-attribution a{color:#4A5857}.leaflet-tooltip{position:absolute;padding:4px 8px;background-color:#FFFDF8;border:1px solid #E2DDD2;border-radius:8px;color:#172A2A;white-space:nowrap;pointer-events:none;box-shadow:0 1px 3px rgba(0,0,0,.2)}.leaflet-tooltip-top:before,.leaflet-tooltip-bottom:before,.leaflet-tooltip-left:before,.leaflet-tooltip-right:before{position:absolute;pointer-events:none;border:6px solid transparent;background:0 0;content:""}
+</style>
+
+<header class="hdr">
+  <div class="wrap hdr-in">
+    <a class="logo" href="#home" data-go="home" aria-label="FoodiePass home"><span data-logo="40"></span><span>Foodie<b>Pass</b></span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="#home" data-go="home">Home</a>
+      <a href="#how" data-go="how">How it works</a>
+      <a href="#restaurants" data-go="restaurants">Restaurants</a>
+      <a href="#partners" data-go="partners">For restaurants</a>
+      <a href="#faq" data-go="faq">FAQ</a>
+    </nav>
+    <div class="hdr-cta">
+      <a class="btn sm" href="#pass" data-go="pass" id="signinBtn">Sign in</a>
+      <a class="btn sm pri" href="#join" data-go="join">Join &#xB7; $30/yr</a>
+    </div>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <a class="logo" href="#home" data-go="home" style="color: var(--linen)"><span data-logo="40" data-dark="1"></span><span>Foodie<b style="color: var(--mustard)">Pass</b></span></a>
+        <p style="margin-top: 14px; max-width: 34ch">One $30 pass. Every great local table in Houston. Opening across the city in November 2026.</p>
+        <div class="social" aria-label="Social media">
+          <a href="#home" aria-label="Instagram (coming soon)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+          <a href="#home" aria-label="Facebook (coming soon)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 3h-2.5A3.5 3.5 0 0 0 9 6.5V10H7v3h2v8h3v-8h2.5l.5-3h-3V7a1 1 0 0 1 1-1h2z"/></svg></a>
+          <a href="#home" aria-label="TikTok (coming soon)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5"/><path d="M14 3c.5 3 2.5 4.5 5 5"/></svg></a>
+          <a href="#home" aria-label="LinkedIn (coming soon)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 10v7M8 7v.01M12 17v-4a2 2 0 0 1 4 0v4M12 10v7"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <h4>Members</h4>
+        <ul>
+          <li><a href="#restaurants" data-go="restaurants">Find restaurants</a></li>
+          <li><a href="#how" data-go="how">How it works</a></li>
+          <li><a href="#join" data-go="join">Become a member</a></li>
+          <li><a href="#join" data-go="join" data-plan="gift">Give a membership</a></li>
+          <li><a href="#pass" data-go="pass">My pass</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Partners</h4>
+        <ul>
+          <li><a href="#partners" data-go="partners">Become a restaurant partner</a></li>
+          <li><a href="#join" data-go="join" data-plan="group">Group memberships</a></li>
+          <li><a href="#join" data-go="join" data-plan="fundraiser">Fundraise with FoodiePass</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Help</h4>
+        <ul>
+          <li><a href="#faq" data-go="faq">FAQ</a></li>
+          <li><a href="#conduct" data-go="conduct">Member code of conduct</a></li>
+          <li><a href="#faq" data-go="faq" data-anchor="contact">Contact us</a></li>
+          <li><a href="#how" data-go="how" data-anchor="app">Add FoodiePass to your phone</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>&#xA9; 2026 FoodiePass &#xB7; Houston, Texas &#xB7; Restaurant listings shown are samples until launch.</span>
+      <span><a href="#conduct" data-go="conduct" data-anchor="terms">Terms</a> &#xB7; <a href="#conduct" data-go="conduct" data-anchor="privacy">Privacy</a></span>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" hidden></div>
+<div id="drawerRoot"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+'use strict';
+// ---------- Brand mark ----------
+function mark(size, cut) {
+  return `<svg width="${size}" height="${size}" viewBox="0 0 120 120" aria-hidden="true"><path d="M28 8 H92 A20 20 0 0 1 112 28 V46 A14 14 0 0 0 112 74 V92 A20 20 0 0 1 92 112 H28 A20 20 0 0 1 8 92 V74 A14 14 0 0 0 8 46 V28 A20 20 0 0 1 28 8 Z" fill="#E2552B"/><rect x="43" y="28" width="8" height="30" rx="4" fill="${cut}"/><rect x="56" y="28" width="8" height="30" rx="4" fill="${cut}"/><rect x="69" y="28" width="8" height="30" rx="4" fill="${cut}"/><rect x="43" y="52" width="34" height="14" rx="7" fill="${cut}"/><rect x="54" y="60" width="12" height="34" rx="6" fill="${cut}"/></svg>`;
+}
+document.querySelectorAll('[data-logo]').forEach((el) => { el.innerHTML = mark(el.dataset.logo, el.dataset.dark ? '#172A2A' : '#F6F4EF'); el.style.display = 'inline-flex'; });
+
+// ---------- Data (sample listings, fictional) ----------
+const DISTRICTS = [
+  { id: 'rice', name: 'Rice Village / West U', lat: 29.7174, lng: -95.4153, live: true },
+  { id: 'montrose', name: 'Montrose', lat: 29.7454, lng: -95.3909, live: true },
+  { id: 'heights', name: 'The Heights', lat: 29.7980, lng: -95.3980, live: true },
+  { id: 'downtown', name: 'Midtown \u00B7 Downtown \u00B7 EaDo', lat: 29.7520, lng: -95.3650, live: true },
+  { id: 'tmc', name: 'Medical Center / Museum District', lat: 29.7140, lng: -95.3960, live: true },
+  { id: 'bellaire', name: 'Bellaire Blvd / Chinatown', lat: 29.7058, lng: -95.5450, live: true },
+  { id: 'galleria', name: 'Galleria / Uptown', lat: 29.7400, lng: -95.4630, live: false },
+  { id: 'memorial', name: 'Memorial / Washington Ave', lat: 29.7700, lng: -95.4050, live: false },
+  { id: 'sugarland', name: 'Sugar Land', lat: 29.6197, lng: -95.6349, live: false },
+  { id: 'katy', name: 'Katy', lat: 29.7858, lng: -95.8245, live: false },
+  { id: 'woodlands', name: 'The Woodlands', lat: 30.1658, lng: -95.4613, live: false },
+  { id: 'pearland', name: 'Pearland', lat: 29.5636, lng: -95.2860, live: false },
+];
+const OFFERS = {
+  ten: '10% off food \u00B7 Sun\u2013Thu',
+  fifteen: '15% off food \u00B7 Mon\u2013Thu',
+  app: 'Free appetizer with 2 entr\u00E9es \u00B7 Sun\u2013Thu',
+  dessert: 'Free dessert with 2 entr\u00E9es \u00B7 Daily',
+  drink: 'Free drink or pastry with purchase \u00B7 Daily',
+};
+// [name, district, cuisine, description, offer, pickup, isNew, founding, price, dLat, dLng]
+const R = [
+  ['Juniper Table', 'rice', 'Mediterranean', 'Mezze plates, wood-grilled kebabs and big shared salads.', 'ten', true, false, true, 2, 0.002, -0.003],
+  ['Kiko Ramen House', 'rice', 'Japanese', 'Rich tonkotsu and miso bowls, gyoza and rice plates.', 'fifteen', true, true, false, 2, -0.002, 0.002],
+  ['Bluebonnet Bakeshop', 'rice', 'Bakery & caf\u00E9', 'Morning pastries, kolaches and pour-over coffee.', 'drink', true, false, true, 1, 0.001, 0.004],
+  ['Rio Verde Cantina', 'rice', 'Tex-Mex', 'Fajitas, queso and enchiladas on a shaded patio.', 'app', false, false, false, 2, -0.003, -0.001],
+  ['Marigold Thai Kitchen', 'montrose', 'Thai', 'Curries, khao soi and wok-fired noodles.', 'ten', true, false, true, 2, 0.002, 0.002],
+  ['The Copper Pot', 'montrose', 'American', 'Neighborhood bistro: burgers, roast chicken, seasonal sides.', 'fifteen', false, true, false, 3, -0.002, -0.003],
+  ['Little Lagos', 'montrose', 'West African', 'Jollof, suya and slow-cooked stews.', 'app', true, true, false, 2, 0.003, -0.001],
+  ['Westheimer Noodle Co.', 'montrose', 'Vietnamese', 'Pho, vermicelli bowls and crispy egg rolls.', 'ten', true, false, false, 1, -0.001, 0.004],
+  ['Studio Smokehouse', 'heights', 'BBQ', 'Post-oak brisket, ribs and scratch sides.', 'ten', true, false, true, 2, 0.002, 0.003],
+  ['Ivy & Oak Trattoria', 'heights', 'Italian', 'Hand-rolled pasta, wood-fired pizza and antipasti.', 'app', false, false, true, 3, -0.003, -0.002],
+  ['Porch Light Coffee', 'heights', 'Bakery & caf\u00E9', 'Espresso, breakfast tacos and laptop-friendly tables.', 'drink', true, true, false, 1, 0.001, -0.004],
+  ['Bayou Biscuit Co.', 'heights', 'Southern', 'Brunch all day: biscuits, gravy and fried chicken.', 'fifteen', false, false, false, 2, -0.001, 0.001],
+  ['Main Street Dumpling Bar', 'downtown', 'Chinese', 'Soup dumplings, scallion pancakes and noodles.', 'ten', true, true, false, 2, 0.004, -0.004],
+  ['Eastwood Taqueria', 'downtown', 'Mexican', 'Al pastor, barbacoa and handmade tortillas.', 'fifteen', true, false, true, 1, -0.002, 0.012],
+  ['Market Square Pizza Co.', 'downtown', 'Pizza', 'New York\u2013style slices and whole pies.', 'ten', true, false, false, 1, 0.006, 0.004],
+  ['Gulf & Grain', 'downtown', 'Seafood', 'Gulf oysters, redfish and grain bowls.', 'app', false, false, false, 3, -0.006, -0.006],
+  ['Museum Mile Kitchen', 'tmc', 'Healthy', 'Grain bowls, wraps and fresh juices near the museums.', 'fifteen', true, false, true, 1, 0.003, 0.004],
+  ['Almeda Curry House', 'tmc', 'Indian', 'Biryani, tikka and weekday lunch thalis.', 'ten', true, true, false, 2, -0.004, 0.006],
+  ['Fannin Street Deli', 'tmc', 'Deli', 'Stacked sandwiches and soups for the after-shift crowd.', 'drink', true, false, false, 1, -0.002, -0.002],
+  ['Third Ward Wing Shop', 'tmc', 'Wings', 'Lemon-pepper, honey-hot and dry-rub wings.', 'ten', true, false, false, 1, 0.004, 0.012],
+  ['Lotus Lane Dim Sum', 'bellaire', 'Chinese', 'Cart-style dim sum and Cantonese roast meats.', 'app', true, false, true, 2, 0.002, 0.004],
+  ['Spoon & Seoul', 'bellaire', 'Korean', 'Tableside barbecue, stews and banchan.', 'dessert', false, true, false, 3, -0.002, -0.004],
+  ['Bayou Banh Mi', 'bellaire', 'Vietnamese', 'Banh mi, rice plates and Vietnamese coffee.', 'drink', true, false, false, 1, 0.003, -0.002],
+  ['Kesar Grill', 'bellaire', 'Pakistani', 'Charcoal kebabs, karahi and fresh naan.', 'fifteen', true, false, false, 2, -0.003, 0.002],
+];
+const D = Object.fromEntries(DISTRICTS.map((d) => [d.id, d]));
+const RESTAURANTS = R.map((r, i) => ({ id: 'r' + i, name: r[0], district: r[1], cuisine: r[2], desc: r[3], offer: OFFERS[r[4]], pickup: r[5], isNew: r[6], founding: r[7], price: r[8], lat: D[r[1]].lat + r[9], lng: D[r[1]].lng + r[10], order: i }));
+const CUISINES = [...new Set(RESTAURANTS.map((r) => r.cuisine))].sort();
+
+// ---------- State ----------
+const store = { get(k) { try { return JSON.parse(localStorage.getItem('fp-' + k)); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem('fp-' + k, JSON.stringify(v)); } catch (e) { /* storage unavailable */ } } };
+const ui = { districts: [], cuisine: '', sort: 'new', mode: 'dine', q: '', hl: null, plan: 'member', filtersOpen: false, joined: false };
+// ---------- Accounts: Supabase Auth (email one-time code, optional Google/Facebook/Apple) ----------
+// Fill these in from your Supabase project (Project Settings > API). The anon/publishable key is safe in a
+// browser. Never put the service-role key or any provider secret here.
+const AUTH_CONFIG = {
+  supabaseUrl: 'https://mroiimqqklitidpzaqnk.supabase.co',
+  supabaseAnonKey: 'sb_publishable_1YSf5nmBBotBnOULa3g7vQ_nj0Fd1RH', // publishable key: safe in a browser (RLS is on)
+  providers: { google: false, facebook: false, apple: false }, // turn each on only after it is set up and tested
+  // 'link' while Supabase's built-in mailer is used (its default email has a sign-in link, not a code).
+  // Switch to 'code' after custom SMTP is set up and the email templates include {{ .Token }}.
+  emailMode: 'link',
+  termsVersion: '2026-10-25',
+  resendSeconds: 60,
+};
+let sb = null;
+try {
+  if (AUTH_CONFIG.supabaseUrl && AUTH_CONFIG.supabaseAnonKey && window.supabase && window.supabase.createClient) {
+    sb = window.supabase.createClient(AUTH_CONFIG.supabaseUrl, AUTH_CONFIG.supabaseAnonKey, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'pkce' } });
+  }
+} catch (e) { sb = null; }
+const AUTH_LIVE = !!sb;
+// Preview fallback (no real accounts) only when Supabase isn't configured.
+let member = AUTH_LIVE ? null : store.get('member');
+const auth = { step: 'email', email: '', busy: false, msg: null, cooldownUntil: 0, timer: null };
+
+// ---------- Billing: Stripe Checkout + Customer Portal through FoodiePass server functions ----------
+// The browser only names an offering. Prices, customers and access are decided on the server.
+const FN_URL = AUTH_CONFIG.supabaseUrl ? AUTH_CONFIG.supabaseUrl.replace(/\/+$/, '') + '/functions/v1' : '';
+const OFFERING = { member: 'membership_annual', gift: 'gift_membership' };
+// fnOk: server functions are deployed and reachable. live: Stripe prices are configured and checkout is on.
+const billing = { status: null, statusError: false, fnOk: null, live: null, offerings: [], busy: false, confirming: false, msg: null, delStep: 0, delMsg: null, giftMsg: null };
+async function loadBillingConfig() {
+  if (!FN_URL) { billing.fnOk = false; billing.live = false; return; }
+  try {
+    const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), 6000);
+    const r = await fetch(FN_URL + '/billing-config', { headers: { apikey: AUTH_CONFIG.supabaseAnonKey }, signal: ctl.signal });
+    clearTimeout(t);
+    const j = r.ok ? await r.json() : null;
+    billing.fnOk = !!j;
+    billing.offerings = (j && j.offerings) || [];
+    billing.live = !!(j && j.checkout_enabled && billing.offerings.length);
+  } catch (e) { billing.fnOk = false; billing.live = false; }
+}
+const offeringLive = (plan) => billing.live && billing.offerings.some((o) => o.id === OFFERING[plan]);
+const NET_ERR = 'We couldn\u2019t reach FoodiePass. Check your connection and try again.';
+const errText = (e) => (e && e.message && e.code ? e.message : NET_ERR);
+function newId() {
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  const b = crypto.getRandomValues(new Uint8Array(16)); b[6] = (b[6] & 15) | 64; b[8] = (b[8] & 63) | 128;
+  const h = Array.from(b, (x) => x.toString(16).padStart(2, '0')).join('');
+  return h.slice(0, 8) + '-' + h.slice(8, 12) + '-' + h.slice(12, 16) + '-' + h.slice(16, 20) + '-' + h.slice(20);
+}
+// One stable attempt id per offering, so double clicks and retries reuse the same checkout session.
+function attemptFor(offering) {
+  const k = 'fp-attempt-' + offering; let id = null;
+  try { id = sessionStorage.getItem(k); } catch (e) { /* ignore */ }
+  if (!id) { id = newId(); try { sessionStorage.setItem(k, id); } catch (e) { /* ignore */ } }
+  return id;
+}
+function clearAttempts() { Object.values(OFFERING).forEach((o) => { try { sessionStorage.removeItem('fp-attempt-' + o); } catch (e) { /* ignore */ } }); }
+async function api(path, opts) {
+  opts = opts || {};
+  const { data } = await sb.auth.getSession();
+  const token = data && data.session ? data.session.access_token : '';
+  const headers = { 'Content-Type': 'application/json', apikey: AUTH_CONFIG.supabaseAnonKey };
+  if (token) headers.Authorization = 'Bearer ' + token;
+  const res = await fetch(FN_URL + '/' + path, { method: opts.method || 'GET', headers, body: opts.body ? JSON.stringify(opts.body) : undefined });
+  let body = null; try { body = await res.json(); } catch (e) { /* empty */ }
+  if (!res.ok) throw (body && body.error) || { code: 'server_error', message: 'Something went wrong on our side. Please try again.' };
+  return body;
+}
+async function loadStatus(attempt) {
+  if (!AUTH_LIVE || !member) return null;
+  if (billing.fnOk === false) { billing.statusError = true; return null; }
+  try {
+    const s = await api('billing-status' + (attempt ? '?attempt=' + encodeURIComponent(attempt) : ''));
+    billing.status = s; billing.statusError = false;
+    if (member) member.membershipActive = !!(s.membership && s.membership.active);
+    return s;
+  } catch (e) { billing.statusError = true; return null; }
+}
+// Re-render the current page in place (no jump to the top).
+function rerender() { if (view !== 'pass' && view !== 'join') return; const y = window.scrollY; go(view); window.scrollTo(0, y); }
+async function startCheckout() {
+  if (!AUTH_LIVE || !member || billing.busy) return;
+  const offering = OFFERING[ui.plan] || OFFERING.member;
+  const btn = document.getElementById('checkoutBtn');
+  billing.busy = true; if (btn) { btn.disabled = true; btn.textContent = 'Opening secure checkout\u2026'; }
+  try {
+    const r = await api('billing-checkout', { method: 'POST', body: { offeringId: offering, attemptId: attemptFor(offering) } });
+    location.assign(r.url);
+  } catch (e) {
+    billing.busy = false; if (btn) { btn.disabled = false; btn.textContent = 'Continue to payment \u00b7 $30'; }
+    if (e && (e.code === 'invalid_plan' || e.code === 'bad_request')) clearAttempts();
+    if (e && e.code === 'already_subscribed') { await loadStatus(); toast(e.message); return go('pass'); }
+    toast(errText(e));
+  }
+}
+// After Stripe sends the member back: poll our status (which also syncs the session directly) for up to 30s.
+async function confirmCheckout(attempt) {
+  billing.confirming = true; billing.msg = null; rerender();
+  const done = (s) => s && ((s.membership && s.membership.active) || s.attempt_status === 'completed');
+  let s = null; const t0 = Date.now();
+  while (Date.now() - t0 < 30000) {
+    s = await loadStatus(attempt);
+    if (done(s)) break;
+    await new Promise((r) => setTimeout(r, 2000));
+  }
+  billing.confirming = false;
+  if (done(s)) { clearAttempts(); toast(s.membership && s.membership.active ? 'Your membership is active. Enjoy!' : 'Payment received. Thank you!'); }
+  else billing.msg = 'We\u2019re still confirming your payment. This can take a minute; refresh this page shortly. You won\u2019t be charged twice.';
+  rerender();
+}
+async function openPortal() {
+  try { const r = await api('billing-portal', { method: 'POST' }); location.assign(r.url); }
+  catch (e) { toast(errText(e)); }
+}
+async function redeemGift(code) {
+  billing.giftMsg = null;
+  try {
+    const r = await api('gift-redeem', { method: 'POST', body: { code } });
+    await loadStatus();
+    billing.giftMsg = { text: 'Gift added. Your membership now runs through ' + new Date(r.access_until).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) + '.' };
+  } catch (e) {
+    billing.giftMsg = { err: true, text: e && e.code === 'invalid_plan' ? 'That gift code isn\u2019t valid or has already been used.' : errText(e) };
+  }
+  rerender();
+}
+async function deleteAccount(confirmWord) {
+  billing.delMsg = null;
+  try {
+    await api('account-delete', { method: 'POST', body: { confirm: confirmWord } });
+    try { await sb.auth.signOut(); } catch (e) { /* session is already gone */ }
+    member = null; billing.status = null; billing.delStep = 0; clearAttempts();
+    toast('Your account has been deleted.'); return go('home');
+  } catch (e) {
+    billing.delMsg = e && e.code === 'reauth_required'
+      ? 'For your security, sign out and sign back in, then delete your account within 10 minutes.'
+      : e && e.code === 'bad_request' ? 'Type DELETE in capitals to confirm.' : errText(e);
+    rerender();
+  }
+}
+const fmtDate = (iso) => (iso ? new Date(iso).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '');
+function accountPanel() {
+  if (!AUTH_LIVE || !member || !member.live) return '';
+  const s = billing.status, m = s && s.membership, sub = s && s.subscription;
+  const err = 'style="background:#FCE7DF; color:#8F3215"';
+  let state = billing.statusError
+    ? '<div class="note">Online membership payments open at launch. Your account is saved, and we\u2019ll email you when you can activate your pass.</div>'
+    : '<p class="small muted">Loading your membership\u2026</p>';
+  if (s) {
+    if (m.active && m.in_grace) state = `<div class="note" role="alert" ${err}><b>Your renewal payment didn\u2019t go through.</b> Your pass stays active until ${fmtDate(m.grace_until)}. Update your card in Manage billing to keep it.</div>`;
+    else if (m.active) state = `<div class="note ok"><b>Membership active</b> through ${fmtDate(m.access_until)}.${sub ? (sub.cancel_at_period_end ? ' It will not renew.' : sub.renews ? ' It renews automatically; we remind you 30 days before.' : '') : ' (gift membership)'}</div>`;
+    else state = '<div class="note">No active membership yet. <a href="#join" data-go="join" data-plan="member">Activate for $30 a year</a>.</div>';
+  }
+  const gifts = s && s.gift_codes && s.gift_codes.length ? `<h3 style="margin-top:8px">Gift codes you bought</h3><ul style="display:grid; gap:8px; padding:0; list-style:none">${s.gift_codes.map((g) => `<li style="display:flex; gap:10px; align-items:center; flex-wrap:wrap"><code style="font-size:17px">${esc(g.code)}</code><span class="small muted">${g.revoked ? 'Cancelled' : g.redeemed ? 'Redeemed' : 'Ready to give'}</span>${!g.revoked && !g.redeemed ? `<button class="btn sm" data-act="copyGift" data-code="${esc(g.code)}">Copy</button>` : ''}</li>`).join('')}</ul>` : '';
+  const giftMsg = billing.giftMsg ? `<div class="note ${billing.giftMsg.err ? '' : 'ok'}" role="status" ${billing.giftMsg.err ? err : ''}>${esc(billing.giftMsg.text)}</div>` : '';
+  const del = billing.delStep === 0
+    ? '<button class="btn sm" data-act="delAsk">Delete my account</button>'
+    : `<form class="stack" id="deleteForm" novalidate>
+        <div class="note" role="alert" ${err}><b>This can\u2019t be undone.</b> Any renewing membership is cancelled right away with no further charges, and your account, pass and unused gift codes are removed. Payment records the law requires us to keep are held by our payment provider.</div>
+        ${billing.delMsg ? `<p class="small" style="color:#8F3215">${esc(billing.delMsg)}</p>` : ''}
+        <label class="f">Type DELETE to confirm<input id="delConfirm" autocomplete="off" autocapitalize="characters"></label>
+        <div style="display:flex; gap:10px; flex-wrap:wrap"><button class="btn pri" type="submit">Delete my account</button><button class="btn" type="button" data-act="delCancel">Keep my account</button></div>
+      </form>`;
+  return `<section class="sand" id="account"><div class="wrap band">
+    <div class="card" style="display:grid; gap:14px">
+      <p class="eyebrow">Account</p><h2 style="font-size:30px">Membership and billing</h2>
+      ${state}
+      ${s && s.can_manage_billing ? '<div><button class="btn dark" data-act="portal">Manage billing</button><p class="small muted" style="margin-top:6px">Update your card, see receipts or turn off renewal on our payment provider\u2019s secure page.</p></div>' : ''}
+      ${gifts}
+    </div>
+    ${billing.fnOk ? `<div class="card" style="display:grid; gap:14px">
+      <h3>Redeem a gift</h3>${giftMsg}
+      <form class="stack" id="giftForm" novalidate><label class="f">Gift code<input id="giftCode" placeholder="FP-XXXX-XXXX-XXXX" autocomplete="off" autocapitalize="characters" required></label><button class="btn" type="submit">Add to my membership</button></form>
+      <h3 style="margin-top:12px">Delete account</h3>${del}
+    </div>` : `<div class="card" style="display:grid; gap:14px">
+      <h3>Your account</h3>
+      <p>Signed in as <b>${esc(member.email)}</b>. Gift codes and account settings open with payments at launch.</p>
+    </div>`}
+  </div></section>`;
+}
+function memberFromUser(u) {
+  if (!u) return null;
+  const md = u.user_metadata || {};
+  return { id: u.id, name: md.full_name || md.name || String(u.email || 'Member').split('@')[0], email: u.email || '', since: Date.parse(u.created_at) || Date.now(), code: 'FP-' + u.id.replace(/-/g, '').slice(0, 6).toUpperCase(), live: true, membershipActive: false };
+}
+const RETURN_KEY = 'fp-return';
+function setReturnTo(r) { try { localStorage.setItem(RETURN_KEY, JSON.stringify(r)); } catch (e) { /* ignore */ } }
+function takeReturnTo() {
+  let r = null;
+  try { r = JSON.parse(localStorage.getItem(RETURN_KEY)); localStorage.removeItem(RETURN_KEY); } catch (e) { r = null; }
+  return r && typeof r.view === 'string' && ['join', 'pass', 'restaurants', 'home'].includes(r.view) ? r : null;
+}
+const isAppleDevice = /iPhone|iPad|Macintosh/.test(navigator.userAgent);
+function providerButtons() {
+  const P = AUTH_CONFIG.providers;
+  const list = [['google', 'Continue with Google'], ['facebook', 'Continue with Facebook'], ['apple', 'Continue with Apple']].filter(([id]) => P[id]);
+  if (isAppleDevice) list.sort((a, b) => (b[0] === 'apple') - (a[0] === 'apple'));
+  if (!list.length) return '';
+  return `<div style="display:grid; gap:10px">${list.map(([id, label]) => `<button type="button" class="btn" data-act="oauth" data-provider="${id}" style="width:100%">${label}</button>`).join('')}</div><p class="small muted" style="text-align:center">or</p>`;
+}
+function authInner(mode) {
+  if (!AUTH_LIVE) {
+    return `<div class="note"><b>Email sign-in isn\u2019t connected yet.</b> Site owner: add your Supabase project URL and key in <code>AUTH_CONFIG</code> to turn on real accounts with emailed codes.</div>
+      <form class="stack" id="signinForm"><label class="f">Email<input id="sEmail" type="email" required autocomplete="email"></label><label class="f">Name on your pass<input id="sName" required autocomplete="name"></label><button class="btn dark" type="submit">Preview sign-in</button><p class="small muted">Preview only: this signs you in on this device without checking your email.</p></form>`;
+  }
+  const msg = auth.msg ? `<div class="note ${auth.msg.err ? '' : 'ok'}" role="${auth.msg.err ? 'alert' : 'status'}" ${auth.msg.err ? 'style="background:#FCE7DF; color:#8F3215"' : ''}>${esc(auth.msg.text)}</div>` : '';
+  if (auth.step === 'code') {
+    const wait = Math.max(0, Math.ceil((auth.cooldownUntil - Date.now()) / 1000));
+    if (AUTH_CONFIG.emailMode === 'link') return `${msg}
+      <p class="small muted">Open the email on this device and tap <b>Sign in</b>. You\u2019ll come straight back here, signed in.</p>
+      <div style="display:flex; gap:10px; flex-wrap:wrap">
+        <button type="button" class="btn sm" data-act="resendCode" id="resendBtn" ${wait > 0 || auth.busy ? 'disabled' : ''}>${wait > 0 ? 'Resend email in ' + wait + 's' : 'Resend email'}</button>
+        <button type="button" class="btn sm" data-act="changeEmail">Use a different email</button>
+      </div>`;
+    return `${msg}
+      <form class="stack" id="authCodeForm" novalidate>
+        <label class="f">6-digit code from your email<input id="authCode" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6,10}" maxlength="10" required placeholder="123456" style="font-size:24px; letter-spacing:6px"></label>
+        <button class="btn pri" type="submit" ${auth.busy ? 'disabled' : ''}>${auth.busy ? 'Checking\u2026' : 'Verify and continue'}</button>
+      </form>
+      <div style="display:flex; gap:10px; flex-wrap:wrap">
+        <button type="button" class="btn sm" data-act="resendCode" id="resendBtn" ${wait > 0 || auth.busy ? 'disabled' : ''}>${wait > 0 ? 'Resend code in ' + wait + 's' : 'Resend code'}</button>
+        <button type="button" class="btn sm" data-act="changeEmail">Use a different email</button>
+      </div>`;
+  }
+  return `${msg}${providerButtons()}
+    <form class="stack" id="authEmailForm" novalidate>
+      ${mode === 'join' ? '<label class="f">Your name (shown on your pass)<input id="authName" autocomplete="name"></label>' : ''}
+      <label class="f">Email<input id="authEmail" type="email" required autocomplete="email" value="${esc(auth.email)}"></label>
+      ${mode === 'join' ? '<label style="display:flex; gap:10px; align-items:flex-start; font-size:15px"><input type="checkbox" id="authMarketing" style="width:20px; height:20px; margin-top:2px"> Send me new restaurants and member offers (optional)</label>' : ''}
+      <button class="btn pri" type="submit" ${auth.busy ? 'disabled' : ''}>${auth.busy ? 'Sending\u2026' : 'Continue with email'}</button>
+      <p class="small muted">We\u2019ll email you a one-time ${AUTH_CONFIG.emailMode === 'link' ? 'sign-in link' : 'code'}. No password needed, and no card to create an account. By continuing you agree to the <a href="#conduct" data-go="conduct" data-anchor="terms">Terms</a> and <a href="#conduct" data-go="conduct" data-anchor="privacy">Privacy Policy</a>.</p>
+    </form>`;
+}
+function authPanel(mode) { return `<div id="authPanel" data-mode="${mode}" style="display:grid; gap:14px">${authInner(mode)}</div>`; }
+function renderAuth() {
+  const el = document.getElementById('authPanel');
+  if (el) el.innerHTML = authInner(el.dataset.mode);
+  clearInterval(auth.timer);
+  if (auth.step === 'code' && auth.cooldownUntil > Date.now()) {
+    auth.timer = setInterval(() => {
+      const b = document.getElementById('resendBtn'); const wait = Math.ceil((auth.cooldownUntil - Date.now()) / 1000);
+      if (!b) return clearInterval(auth.timer);
+      const noun = AUTH_CONFIG.emailMode === 'link' ? 'email' : 'code'; if (wait <= 0) { b.disabled = false; b.textContent = 'Resend ' + noun; clearInterval(auth.timer); } else b.textContent = 'Resend ' + noun + ' in ' + wait + 's';
+    }, 1000);
+  }
+}
+const isRateLimited = (err) => err && (err.status === 429 || /rate limit|too many|security purposes/i.test(err.message || ''));
+async function sendCode(email, name, marketing) {
+  if (auth.busy) return;
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { auth.msg = { err: true, text: 'Enter a valid email address, like name@example.com.' }; return renderAuth(); }
+  auth.busy = true; auth.msg = null; renderAuth();
+  let error = null;
+  try {
+    ({ error } = await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: true, emailRedirectTo: location.origin + location.pathname, data: { full_name: name || undefined, terms_version: AUTH_CONFIG.termsVersion, terms_accepted_at: new Date().toISOString(), marketing_opt_in: !!marketing } } }));
+  } catch (e) { error = { message: 'network' }; }
+  auth.busy = false;
+  if (error && isRateLimited(error)) auth.msg = { err: true, text: 'Too many code requests. Wait a minute, then try again.' };
+  else if (error) auth.msg = { err: true, text: 'We couldn\u2019t send a code just now. Check your connection and the address, then try again.' };
+  else { auth.step = 'code'; auth.email = email; auth.cooldownUntil = Date.now() + AUTH_CONFIG.resendSeconds * 1000; auth.msg = { text: 'If ' + email + ' can receive email, ' + (AUTH_CONFIG.emailMode === 'link' ? 'a sign-in link' : 'a code') + ' is on its way. It expires in 10 minutes. Check spam if you don\u2019t see it.' }; }
+  renderAuth();
+  const next = document.getElementById(auth.step === 'code' ? 'authCode' : 'authEmail'); if (next) next.focus();
+}
+async function verifyCode(token) {
+  if (auth.busy) return;
+  token = String(token || '').replace(/\D/g, '');
+  if (token.length < 6) { auth.msg = { err: true, text: 'Enter the 6-digit code from the email.' }; return renderAuth(); }
+  auth.busy = true; auth.msg = null; renderAuth();
+  let data = null, error = null;
+  try { ({ data, error } = await sb.auth.verifyOtp({ email: auth.email, token, type: 'email' })); } catch (e) { error = { message: 'network' }; }
+  auth.busy = false;
+  if (error || !data || !data.session) {
+    auth.msg = { err: true, text: isRateLimited(error) ? 'Too many attempts. Wait a minute, then try again.' : 'That code is wrong or has expired. Check the latest email, or send a new code.' };
+    return renderAuth();
+  }
+  auth.step = 'email'; auth.msg = null;
+  member = memberFromUser(data.session.user);
+  toast('You\u2019re signed in');
+  afterSignIn();
+}
+function afterSignIn() {
+  refreshChrome();
+  const r = takeReturnTo();
+  if (r) { if (r.plan) ui.plan = r.plan; return go(r.view, r.anchor); }
+  if (view === 'join') return go('join', 'checkout');
+  return go('pass');
+}
+function refreshChrome() { const b = $('#signinBtn'); if (b) b.textContent = member ? 'My pass' : 'Sign in'; }
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const $ = (s) => document.querySelector(s);
+function toast(t) { const el = $('#toast'); el.textContent = t; el.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => (el.hidden = true), 2800); }
+
+// ---------- Icons ----------
+const I = {
+  dine: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 3c-2 2-2 6 0 8v10"/></svg>',
+  pickup: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>',
+  pin: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 21s-7-6.5-7-12a7 7 0 0 1 14 0c0 5.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>',
+  star: '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/></svg>',
+  spark: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M12 3v5M12 16v5M3 12h5M16 12h5"/></svg>',
+  fork: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 3v7M11 3v7M14 3v7M8 10h6M11 10v11"/></svg>',
+};
+
+// ---------- Pages ----------
+function passCard(name, until) {
+  return `<div class="pass" aria-label="Sample member pass">
+    <div class="pass-top"><span class="eyebrow">Member pass</span><span class="pass-live"><span class="pulse"></span>Live</span></div>
+    <p class="pass-name">${esc(name)}</p>
+    <div class="pass-clock tabular" data-clock>--:--:--</div>
+    <div class="pass-row"><div><p class="k">Valid through</p><p class="v">${esc(until)}</p></div><div style="text-align:right"><p class="k">Today</p><p class="v" data-date>\u2014</p></div></div>
+    <p class="small muted">The moving clock shows staff the pass is live, not a screenshot.</p>
+  </div>`;
+}
+
+function restaurantCard(r, compact) {
+  const d = D[r.district];
+  return `<article class="rc${ui.hl === r.id ? ' hl' : ''}" data-rid="${r.id}">
+    <div class="rc-top"><h3>${esc(r.name)}</h3><span class="muted small">${'$'.repeat(r.price)}</span></div>
+    <div class="meta"><span>${I.fork}${esc(r.cuisine)}</span><span>${I.pin}${esc(d.name)}</span></div>
+    ${compact ? '' : `<p style="color: var(--ink-2)">${esc(r.desc)}</p>`}
+    <span class="offer">${I.spark}${esc(r.offer)}</span>
+    <div class="rc-actions">
+      <div class="badges">${r.isNew ? `<span class="badge new">${I.star}New</span>` : ''}${r.founding ? `<span class="badge fp">${I.star}Founding partner</span>` : ''}<span class="badge">${I.dine}Dine-in</span>${r.pickup ? `<span class="badge">${I.pickup}Pickup</span>` : ''}</div>
+      <button class="btn sm dark" data-open="${r.id}">View restaurant</button>
+    </div>
+    <p class="sample">Sample listing. Real partners will be announced before launch.</p>
+  </article>`;
+}
+
+function insider() {
+  return `<div class="insider">
+    <div style="display:flex; flex-direction:column; gap:6px; max-width: 520px">
+      <h3>Become a FoodiePass Insider</h3>
+      <p style="font-size:18px">New restaurants, member offers and the launch date, once a month. No spam.</p>
+    </div>
+    <form id="insiderForm" aria-label="Newsletter sign-up">
+      <label for="insiderEmail" class="sr" style="position:absolute; left:-9999px">Email address</label>
+      <input id="insiderEmail" type="email" required placeholder="you@example.com" autocomplete="email">
+      <button class="btn dark" type="submit">Sign me up</button>
+    </form>
+  </div>`;
+}
+
+function vHome() {
+  const featured = RESTAURANTS.filter((r) => r.founding).slice(0, 3);
+  return `
+  <section class="hero on-dark"><div class="wrap hero-in">
+    <div>
+      <p class="eyebrow">Houston\u2019s dining membership</p>
+      <h1 style="margin-top:14px">One $30 pass.<br><span>Every great local table in Houston.</span></h1>
+      <p class="lede">A deal at every partner restaurant across the city. Pays for itself in about five dinners.</p>
+      <div class="ctas"><a class="btn pri" href="#join" data-go="join">Join for $30 a year</a><a class="btn ghost-light" href="#restaurants" data-go="restaurants">Find restaurants</a><a class="link" href="#partners" data-go="partners">Restaurants join free \u2192</a></div>
+    </div>
+    ${passCard('[Member Name]', 'Nov 2027')}
+  </div></section>
+
+  <section><div class="wrap">
+    <div class="sec-head"><p class="eyebrow">How it works</p><h2>Find. Show. Save.</h2></div>
+    <div class="grid g3">
+      <div class="card"><span class="step-n">1</span><h3>Find a spot</h3><p>Browse partner restaurants on the map. Each offer fits on one line, like \u201C10% off food \u00B7 Sun\u2013Thu.\u201D</p></div>
+      <div class="card"><span class="step-n">2</span><h3>Show your pass</h3><p>Before you pay, show the live pass on your phone. No card to carry or lose.</p></div>
+      <div class="card"><span class="step-n">3</span><h3>Save on the check</h3><p>Your server applies the offer. 10% off a $60 dinner for two saves $6.</p></div>
+    </div>
+  </div></section>
+
+  <section class="sand"><div class="wrap">
+    <div class="grid g3">
+      <div><p class="stat">$30</p><p style="margin-top:8px; color: var(--ink-2)">a year, for 12 months from the day you join. No calendar-year cutoff.</p></div>
+      <div><p class="stat">~5</p><p style="margin-top:8px; color: var(--ink-2)">dinners to earn it back at 10% off a $60 table for two.</p></div>
+      <div><p class="stat">6</p><p style="margin-top:8px; color: var(--ink-2)">Houston districts at launch in November 2026, with more opening through 2027.</p></div>
+    </div>
+  </div></section>
+
+  <section><div class="wrap">
+    <div class="results-head"><div class="sec-head" style="margin:0"><p class="eyebrow">Founding partners</p><h2>A taste of the map</h2></div><a class="btn" href="#restaurants" data-go="restaurants">See all restaurants</a></div>
+    <div class="grid g3" style="margin-top: 24px">${featured.map((r) => restaurantCard(r, true)).join('')}</div>
+  </div></section>
+
+  <section class="dark on-dark"><div class="wrap band">
+    <div class="sec-head" style="margin:0"><p class="eyebrow">For restaurant owners</p><h2 style="color: var(--linen)">Fill your slow nights. Free to join.</h2><p>No fee, no commission, no new hardware. You choose the offer and the days, and you can leave with 30 days\u2019 notice.</p><div style="margin-top:14px"><a class="btn pri" href="#partners" data-go="partners">Become a partner</a></div></div>
+    <div class="grid" style="gap:14px">
+      <div class="card"><h3 style="color: var(--linen)">Group memberships</h3><p>Employers, hospitals, universities and apartment buildings: $22.50 a seat for 50 or more.</p></div>
+      <div class="card"><h3 style="color: var(--linen)">Fundraise with us</h3><p>Schools and nonprofits keep $7.50 of every $30 membership they sell.</p></div>
+    </div>
+  </div></section>
+
+  <section><div class="wrap">${insider()}</div></section>`;
+}
+
+function vHow() {
+  return `
+  <section><div class="wrap">
+    <div class="sec-head"><p class="eyebrow">How it works</p><h1 style="font-size: clamp(40px, 5.4vw, 64px)">How FoodiePass saves you money at Houston\u2019s local restaurants</h1><p>Five steps from sign-up to your first saved check.</p></div>
+    <div class="grid" style="gap:16px">
+      ${[
+        ['Join FoodiePass', 'Pay $30 for 12 months. Sign-up takes about two minutes and your pass is active right away.'],
+        ['Find a restaurant you love', 'Use the map or list to find partners near you. Filter by neighborhood, cuisine, dine-in or pickup.'],
+        ['Show your live pass', 'Open your pass before you pay. It shows your name, your expiry date and a moving clock, so staff know it isn\u2019t a screenshot.'],
+        ['Save on your bill', 'Your server applies the restaurant\u2019s offer, such as 10% off food or a free appetizer. For pickup, show your pass when you pay.'],
+        ['Bring a friend', 'Share your referral link. When a friend joins, you both get two extra months free.'],
+      ].map(([t, b], i) => `<div class="card" style="flex-direction:row; gap:24px; align-items:flex-start"><span class="step-n" style="min-width:56px">${i + 1}</span><div style="display:grid; gap:6px"><h3>${t}</h3><p>${b}</p></div></div>`).join('')}
+    </div>
+    <div style="margin-top:28px; display:flex; gap:12px; flex-wrap:wrap"><a class="btn pri" href="#join" data-go="join">Join for $30 a year</a><a class="btn" href="#restaurants" data-go="restaurants">Find restaurants</a></div>
+  </div></section>
+
+  <section class="sand"><div class="wrap band">
+    <div class="sec-head" style="margin:0"><p class="eyebrow">Giving back</p><h2>Every school fundraiser keeps $7.50</h2><p>Schools, teams and nonprofits can sell FoodiePass memberships and keep $7.50 of each $30 sale. Families get a year of savings and the cause gets real money.</p><div style="margin-top:14px"><a class="btn dark" href="#join" data-go="join" data-plan="fundraiser">Start a fundraiser</a></div></div>
+    <div class="card"><h3>How to spot a partner</h3><p>Partner restaurants show a FoodiePass sticker in the window and sign-up cards on the tables. Not sure? Search the restaurant on our map.</p></div>
+  </div></section>
+
+  <section id="app"><div class="wrap">
+    <div class="sec-head"><p class="eyebrow">On your phone</p><h2>Add FoodiePass to your home screen</h2><p>FoodiePass works in your phone\u2019s browser, so there\u2019s nothing to download. Add it to your home screen for one-tap access. iPhone and Android apps are planned for 2027.</p></div>
+    <div class="grid g2">
+      <div class="card"><h3>iPhone</h3><p>Open FoodiePass in Safari, tap the Share button, then \u201CAdd to Home Screen.\u201D</p></div>
+      <div class="card"><h3>Android</h3><p>Open FoodiePass in Chrome, tap the menu, then \u201CAdd to Home screen.\u201D</p></div>
+    </div>
+  </div></section>`;
+}
+
+function vRestaurants() {
+  const n = filtered().length;
+  return `
+  <section class="finder-hero"><div class="wrap">
+    <p class="eyebrow">Partner restaurants</p>
+    <h1 style="margin-top:10px">Find a FoodiePass restaurant</h1>
+    <form class="searchbar" id="searchForm" role="search">
+      <label for="q" style="position:absolute; left:-9999px">Search restaurants</label>
+      <input id="q" value="${esc(ui.q)}" placeholder="Search by name or cuisine" autocomplete="off">
+      <button class="btn dark" type="submit">Search</button>
+      <button class="btn" type="button" data-act="locate">${I.pin} Use my location</button>
+      <button class="btn filters-toggle" type="button" data-act="toggleFilters">Filters</button>
+    </form>
+  </div></section>
+  <div class="wrap finder">
+    <aside class="panel${ui.filtersOpen ? '' : ' collapsed'}" aria-label="Filters">
+      <div style="display:grid; gap:10px"><h3>Service</h3><div class="seg" role="group" aria-label="Service type"><button class="${ui.mode === 'dine' ? 'on' : ''}" data-mode="dine" aria-pressed="${ui.mode === 'dine'}">Dine-in</button><button class="${ui.mode === 'pickup' ? 'on' : ''}" data-mode="pickup" aria-pressed="${ui.mode === 'pickup'}">Pickup</button></div></div>
+      <div style="display:grid; gap:10px"><h3>Neighborhood</h3><div class="chips">${DISTRICTS.map((d) => `<button class="chip${ui.districts.includes(d.id) ? ' on' : ''}" data-district="${d.id}" aria-pressed="${ui.districts.includes(d.id)}" ${d.live ? '' : 'title="Opening in 2027"'}>${esc(d.name)}${d.live ? '' : ' <span class="soon">\u00B7 soon</span>'}</button>`).join('')}</div></div>
+      <div style="display:grid; gap:10px"><h3><label for="cuisineSel">Cuisine</label></h3><select id="cuisineSel" class="inp"><option value="">All cuisines</option>${CUISINES.map((c) => `<option${c === ui.cuisine ? ' selected' : ''}>${esc(c)}</option>`).join('')}</select></div>
+      <div style="display:grid; gap:10px"><h3><label for="sortSel">Sort by</label></h3><select id="sortSel" class="inp"><option value="new"${ui.sort === 'new' ? ' selected' : ''}>New first</option><option value="az"${ui.sort === 'az' ? ' selected' : ''}>Alphabetical</option><option value="near"${ui.sort === 'near' ? ' selected' : ''}>Nearest${ui.here ? '' : ' (use my location)'}</option></select></div>
+      <button class="btn sm" data-act="clear">Clear filters</button>
+      <div style="display:grid; gap:10px"><h3>Legend</h3><div class="legend">
+        <div><span class="badge new">${I.star}New</span> Joined in the last 30 days</div>
+        <div><span class="badge fp">${I.star}Founding</span> First partners in a district</div>
+        <div><span class="badge">${I.dine}Dine-in</span> Offer at the table</div>
+        <div><span class="badge">${I.pickup}Pickup</span> Offer on pickup orders</div>
+      </div></div>
+    </aside>
+    <div>
+      <div class="results-head"><p><b class="tabular">${n}</b> restaurant${n === 1 ? '' : 's'} ${ui.here ? 'near you' : 'found'}${ui.districts.length ? ' in ' + ui.districts.map((d) => esc(D[d].name)).join(', ') : ''}</p>${(ui.districts.length || ui.cuisine || ui.q || ui.mode !== 'dine') ? '<button class="btn sm" data-act="clear">Reset filters</button>' : ''}</div>
+      <div class="list" id="list">${renderList()}</div>
+    </div>
+    <div class="mapbox"><div id="map" role="region" aria-label="Map of partner restaurants"></div><p class="map-note" id="mapNote" hidden>Simplified map \u00B7 open the full site for street maps</p></div>
+  </div>`;
+}
+
+function renderList() {
+  const items = filtered();
+  if (!items.length) {
+    const soon = ui.districts.filter((d) => !D[d].live);
+    return `<div class="card"><h3>No results</h3><p>${soon.length ? `${esc(soon.map((d) => D[d].name).join(', '))} ${soon.length > 1 ? 'open' : 'opens'} in 2027. Join the Insider list to hear first.` : 'Try another neighborhood or clear your filters.'}</p><button class="btn sm" data-act="clear" style="align-self:flex-start">Clear filters</button></div>`;
+  }
+  return items.map((r) => restaurantCard(r, false)).join('');
+}
+
+function filtered() {
+  let items = RESTAURANTS.slice();
+  if (ui.mode === 'pickup') items = items.filter((r) => r.pickup);
+  if (ui.districts.length) items = items.filter((r) => ui.districts.includes(r.district));
+  if (ui.cuisine) items = items.filter((r) => r.cuisine === ui.cuisine);
+  if (ui.q) { const q = ui.q.toLowerCase(); items = items.filter((r) => (r.name + ' ' + r.cuisine + ' ' + r.desc + ' ' + D[r.district].name).toLowerCase().includes(q)); }
+  if (ui.sort === 'az') items.sort((a, b) => a.name.localeCompare(b.name));
+  else if (ui.sort === 'near' && ui.here) items.sort((a, b) => dist(a) - dist(b));
+  else items.sort((a, b) => (b.isNew - a.isNew) || (b.founding - a.founding) || a.order - b.order);
+  return items;
+}
+function dist(r) { const dl = r.lat - ui.here.lat, dg = (r.lng - ui.here.lng) * Math.cos(r.lat * Math.PI / 180); return dl * dl + dg * dg; }
+
+function vJoin() {
+  const p = ui.plan;
+  const plans = [
+    ['member', 'Membership', '$30', '/year', ['Offers at every partner restaurant', 'Active the minute you pay', '12 months from the day you join', 'Renewal reminder 30 days before expiry'], 'Join now'],
+    ['gift', 'Gift', '$30', '/year', ['A year of FoodiePass for someone else', 'Delivered as a code by email or text', 'Starts when they redeem it'], 'Give a gift'],
+    ['group', 'Group', '$22.50', '/seat', ['For 50 or more people', 'Employers, hospitals, universities, apartment buildings', 'One invoice, simple seat list'], 'Ask about groups'],
+    ['fundraiser', 'Fundraiser', '$7.50', ' kept per sale', ['For schools, teams and nonprofits', 'Sell memberships at $30', 'Your cause keeps $7.50 of each'], 'Start a fundraiser'],
+  ];
+  return `
+  <section><div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Join</p><h1 style="font-size: clamp(40px, 5.4vw, 64px)">One price. Every partner. All of Houston.</h1><p>Most members earn back the $30 in about five dinners out.</p></div>
+    <div class="plans">${plans.map(([id, t, price, per, list, cta]) => `<div class="plan${id === 'member' ? ' feature' : ''}"><p class="eyebrow">${t}</p><p class="price">${price}<small>${per}</small></p><ul>${list.map((x) => `<li>${x}</li>`).join('')}</ul><button class="btn ${id === p ? 'pri' : 'dark'}" data-plan-pick="${id}">${cta}</button></div>`).join('')}</div>
+  </div></section>
+  <section class="sand" id="checkout"><div class="wrap band">
+    <div class="card">
+      ${AUTH_LIVE && (p === 'member' || p === 'gift') ? (member ? (p === 'member' && member.membershipActive ? `
+      <h2 style="font-size:34px">You\u2019re already a member</h2>
+      <p>Your membership is active through ${fmtDate(billing.status && billing.status.membership.access_until)}. Want to treat someone? <a href="#join" data-go="join" data-plan="gift">Send a gift</a>.</p>
+      <a class="btn pri" href="#pass" data-go="pass" style="align-self:flex-start">Open my pass</a>` : `
+      <h2 style="font-size:34px">${p === 'gift' ? 'Send a gift membership' : 'Activate your membership'}</h2>
+      <p>Signed in as <b>${esc(member.email)}</b>. Your account is free; the $30 ${p === 'gift' ? 'gift' : 'membership'} is a separate payment.${p === 'gift' ? ' After payment you\u2019ll get a gift code on your My pass page to send however you like.' : ' It renews yearly; you can turn that off any time.'}</p>
+      ${offeringLive(p) ? `<button class="btn pri" id="checkoutBtn" data-act="checkout" style="align-self:flex-start" ${billing.busy ? 'disabled' : ''}>Continue to payment \u00b7 $30</button>`
+        : billing.live === null ? '<button class="btn pri" style="align-self:flex-start" disabled>Loading payment options\u2026</button>'
+        : `<div class="note ok"><b>Your account is ready.</b> Online payment opens at launch. We\u2019ll email ${esc(member.email)} as soon as you can ${p === 'gift' ? 'send a gift' : 'activate your membership'}.</div>`}
+      <p class="small muted">You\u2019ll pay on our payment provider\u2019s secure page. FoodiePass never sees or stores your card details.</p>`) : `
+      <h2 style="font-size:34px">Create your free account</h2>
+      <p>First, confirm your email. You\u2019ll pay only when you activate the membership.</p>
+      ${authPanel('join')}`) : ui.joined ? `<div class="note ok"><b>You\u2019re in.</b> Your pass is ready on the My pass page.</div><a class="btn pri" href="#pass" data-go="pass" style="align-self:flex-start">Open my pass</a>` : `
+      <h2 style="font-size:34px">${{ member: 'Start your membership', gift: 'Send a gift membership', group: 'Group membership inquiry', fundraiser: 'Start a fundraiser' }[p]}</h2>
+      <form class="stack" id="joinForm">
+        <label class="f">${p === 'gift' ? 'Your name' : p === 'member' ? 'Full name (shown on your pass)' : 'Contact name'}<input id="jName" required autocomplete="name"></label>
+        <label class="f">Email<input id="jEmail" type="email" required autocomplete="email"></label>
+        ${p === 'gift' ? '<label class="f">Recipient\u2019s name<input id="jRecipient" required></label>' : ''}
+        ${p === 'group' || p === 'fundraiser' ? `<label class="f">${p === 'group' ? 'Organization' : 'School or nonprofit'}<input id="jOrg" required></label><label class="f">${p === 'group' ? 'Number of seats (50+)' : 'Memberships you hope to sell'}<input id="jCount" type="number" min="${p === 'group' ? 50 : 1}" required></label>` : ''}
+        <button class="btn pri" type="submit">${p === 'member' ? 'Continue to payment \u00B7 $30' : p === 'gift' ? 'Continue to payment \u00B7 $30' : 'Send'}</button>
+        <p class="small muted">Preview only: no payment is taken and nothing is sent. Card details will be handled by our payment provider and never stored by FoodiePass.</p>
+      </form>`}
+    </div>
+    <div class="sec-head" style="margin:0"><p class="eyebrow">The fine print, in plain words</p><h2 style="font-size:34px">What you get for $30</h2><p>Your membership lasts 12 months from the day you join. We remind you 30 days before it ends and list every restaurant added since you joined. One pass per person, on one phone at a time. Alcohol is excluded unless a restaurant says otherwise.</p></div>
+  </div></section>`;
+}
+
+function vPass() {
+  if (!member) {
+    return `<section><div class="wrap band">
+      <div class="sec-head" style="margin:0"><p class="eyebrow">My pass</p><h1 style="font-size: clamp(40px, 5.4vw, 60px)">Welcome back</h1><p>Sign in with the email you joined with. Not a member yet? <a href="#join" data-go="join">Join for $30 a year</a>.</p></div>
+      <div class="card">${authPanel('signin')}</div>
+    </div></section>`;
+  }
+  const accessUntil = billing.status && billing.status.membership && billing.status.membership.access_until;
+  const until = accessUntil ? new Date(accessUntil) : new Date(member.since); if (!accessUntil) until.setFullYear(until.getFullYear() + 1);
+  const pending = member.live && !member.membershipActive;
+  const notice = billing.confirming ? '<div class="note" role="status" style="margin-top:14px"><b>Confirming your membership\u2026</b> This usually takes a few seconds.</div>'
+    : billing.msg ? `<div class="note" role="status" style="margin-top:14px">${esc(billing.msg)}</div>` : '';
+  return `<section><div class="wrap band">
+    <div class="sec-head" style="margin:0"><p class="eyebrow">My pass</p><h1 style="font-size: clamp(40px, 5.4vw, 60px)">${pending ? 'Your account is verified' : 'Show this before you pay'}</h1>
+      <p>${pending ? `Signed in as <b>${esc(member.email)}</b>. Your pass goes live once your $30 membership is active.` : 'Your server applies the restaurant\u2019s offer. Keep the screen open so they can see the clock moving.'}</p>${notice}
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px">${pending ? '<a class="btn pri" href="#join" data-go="join" data-plan="member">Activate membership</a>' : ''}<a class="btn" href="#restaurants" data-go="restaurants">Find a restaurant</a><button class="btn" data-act="share">Copy my referral link</button><button class="btn" data-act="report">Report a problem</button><button class="btn" data-act="signout">Sign out</button>${member.live ? '<button class="btn" data-act="signoutAll">Sign out on all devices</button>' : ''}</div>
+      <p class="small muted" style="margin-top:12px">Refer a friend: you both get two extra months.${pending ? ' The pass shown is a preview.' : ''}</p>
+    </div>
+    ${passCard(member.name, until.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }))}
+  </div></section>${accountPanel()}`;
+}
+
+function vPartners() {
+  return `
+  <section class="hero on-dark" style="padding-block:64px"><div class="wrap hero-in">
+    <div><p class="eyebrow">For restaurant owners</p><h1 style="margin-top:14px">More guests on your slow nights. <span>Free to join.</span></h1><p class="lede">Members pay us $30 a year. You pay nothing, and you choose the offer.</p></div>
+    <div class="grid" style="gap:14px">
+      <div class="card"><h3 style="color: var(--linen)">$0 to join</h3><p>No listing fee, no commission, no hardware, no POS change.</p></div>
+      <div class="card"><h3 style="color: var(--linen)">~$5 per table</h3><p>What 10% off food costs on a $60 dinner for two.</p></div>
+    </div>
+  </div></section>
+  <section><div class="wrap">
+    <div class="sec-head"><p class="eyebrow">The offer menu</p><h2>Pick one, and the days it runs</h2><p>Offers run at least four days a week, fit on one line and exclude alcohol by default.</p></div>
+    <div class="grid g4">
+      <div class="card"><h3>10% off food</h3><p>Any full-service restaurant. About $5 on a $60 table.</p></div>
+      <div class="card"><h3>Free appetizer or dessert</h3><p>With two entr\u00E9es. About $3\u20134 in food cost.</p></div>
+      <div class="card"><h3>15% off, Mon\u2013Thu</h3><p>For slow early-week nights. About $9 on a $60 table.</p></div>
+      <div class="card"><h3>Free drink or pastry</h3><p>Coffee shops, bakeries and counter service. About $1\u20132.</p></div>
+    </div>
+  </div></section>
+  <section class="sand"><div class="wrap band">
+    <div class="sec-head" style="margin:0"><p class="eyebrow">What we ask</p><h2>Three things, and we do the rest</h2><p>1. Honor your offer for any member with a live pass. 2. Keep our window sticker up and sign-up cards on the tables. 3. Brief your staff; we bring a half-page sheet and visit in week one.</p><p style="margin-top:10px"><b>Founding partners</b> in each district get top placement on the map for 12 months.</p></div>
+    <div class="card">
+      ${ui.partnerSent ? '<div class="note ok"><b>Thanks!</b> We\u2019ll call within two business days to set up a short visit.</div>' : `<h3>Tell us about your restaurant</h3>
+      <form class="stack" id="partnerForm">
+        <label class="f">Restaurant name<input id="pName" required></label>
+        <label class="f">Your name<input id="pContact" required autocomplete="name"></label>
+        <label class="f">Phone or email<input id="pReach" required></label>
+        <label class="f">Neighborhood<select id="pDistrict">${DISTRICTS.map((d) => `<option>${esc(d.name)}</option>`).join('')}<option>Somewhere else in Houston</option></select></label>
+        <label class="f">Your slowest nights<input id="pSlow" placeholder="e.g. Monday to Wednesday"></label>
+        <button class="btn pri" type="submit">Request a visit</button>
+        <p class="small muted">Preview only: nothing is sent from this page yet.</p>
+      </form>`}
+    </div>
+  </div></section>`;
+}
+
+const FAQS = [
+  ['How do I know a restaurant takes FoodiePass?', 'Partners show a FoodiePass sticker in the window and sign-up cards on the tables. You can also search for the restaurant on our map.'],
+  ['How does the discount work?', 'Show your live pass before you pay. Your server applies that restaurant\u2019s offer, such as 10% off food or a free appetizer. Each offer and its days are listed on the restaurant\u2019s card.'],
+  ['How much is FoodiePass?', '$30 a year. Your membership lasts 12 months from the day you join, not until the end of the calendar year.'],
+  ['Does it renew automatically?', 'We email you 30 days before your membership ends, with every restaurant added since you joined. [Auto-renew policy to be confirmed before launch.]'],
+  ['Can I combine it with other deals?', 'Usually not. FoodiePass offers can\u2019t be combined with happy hour, other coupons or specials unless the restaurant says so.'],
+  ['Does it cover alcohol?', 'Not by default. A few restaurants may choose a drink offer, and their card will say so.'],
+  ['Can I share my pass?', 'No. Each pass is for one person, signed in on one phone at a time. The moving clock shows staff it\u2019s live.'],
+  ['What if a restaurant doesn\u2019t honor my pass?', 'Tap \u201CReport a problem\u201D on your pass. We follow up with the restaurant and remove partners who don\u2019t honor offers.'],
+  ['How do I add my restaurant?', 'Restaurants join free. Visit the For restaurants page and request a short visit.'],
+  ['Can I get a refund?', '[Refund policy to be confirmed before launch.]'],
+];
+function vFaq() {
+  return `<section><div class="wrap" style="max-width: 900px">
+    <div class="sec-head"><p class="eyebrow">Help</p><h1 style="font-size: clamp(40px, 5.4vw, 60px)">Frequently asked questions</h1></div>
+    ${FAQS.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('')}
+    <div class="card" id="contact" style="margin-top:28px"><h3>Contact us</h3><p>Email [hello@yourdomain] or call [phone]. We answer within one business day.</p></div>
+  </div></section>`;
+}
+
+function vConduct() {
+  return `<section><div class="wrap" style="max-width: 900px">
+    <div class="sec-head"><p class="eyebrow">Members</p><h1 style="font-size: clamp(40px, 5.4vw, 60px)">Member code of conduct</h1><p>FoodiePass works because restaurants trust our members. Please:</p></div>
+    <div class="grid" style="gap:12px">
+      <div class="card"><h3>Show your pass before you pay</h3><p>Not after the check is printed. It saves your server a re-ring.</p></div>
+      <div class="card"><h3>Tip on the full amount</h3><p>Your server did the full job. Tip on the check before the discount.</p></div>
+      <div class="card"><h3>Keep your pass to yourself</h3><p>One pass, one person. Shared or copied passes are cancelled.</p></div>
+      <div class="card"><h3>Be kind if something goes wrong</h3><p>Use \u201CReport a problem\u201D and let us sort it out with the restaurant.</p></div>
+    </div>
+    <div class="card" id="terms" style="margin-top:28px"><h3>Terms</h3><p>[Membership terms to be published before launch.]</p></div>
+    <div class="card" id="privacy" style="margin-top:12px"><h3>Privacy</h3><p>[Privacy policy to be published before launch. Card details are handled by our payment provider and are never stored by FoodiePass.]</p></div>
+  </div></section>`;
+}
+
+// ---------- Map ----------
+let map = null, layer = null, markers = {}, usingFallback = false;
+function mountMap() {
+  const el = document.getElementById('map');
+  if (!el || !window.L) { if (el) el.innerHTML = '<p style="padding:20px">The map could not load. The list shows every restaurant.</p>'; return; }
+  if (map) { map.remove(); map = null; }
+  map = L.map(el, { zoomControl: true, scrollWheelZoom: false }).setView([29.745, -95.43], 11);
+  usingFallback = false;
+  // Street-map sources in order: OpenStreetMap (needs a web address), then Esri (works from a local file), then a drawn outline.
+  const SOURCES = [
+    ['https://tile.openstreetmap.org/{z}/{x}/{y}.png', '\u00A9 <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'],
+    ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', 'Tiles \u00A9 Esri \u2014 Esri, HERE, Garmin, \u00A9 OpenStreetMap contributors'],
+  ];
+  if (location.protocol === 'file:') SOURCES.reverse();
+  let tiles = null, loaded = false, srcIdx = -1, timer = null;
+  function nextSource() {
+    if (!map) return;
+    if (tiles) { map.removeLayer(tiles); tiles = null; }
+    srcIdx += 1;
+    if (srcIdx >= SOURCES.length) return fallback();
+    loaded = false;
+    tiles = L.tileLayer(SOURCES[srcIdx][0], { maxZoom: 19, attribution: SOURCES[srcIdx][1] });
+    tiles.on('tileload', () => { loaded = true; });
+    tiles.on('tileerror', () => { if (!loaded) { clearTimeout(timer); nextSource(); } });
+    tiles.addTo(map);
+    clearTimeout(timer);
+    timer = setTimeout(() => { if (!loaded) nextSource(); }, 3500);
+  }
+  nextSource();
+  function fallback() {
+    if (usingFallback || !map) return;
+    usingFallback = true;
+    if (tiles) { map.removeLayer(tiles); tiles = null; }
+    const s = { color: '#BFB6A4', weight: 3, opacity: 0.9, interactive: false };
+    L.polyline([[29.805, -95.45], [29.812, -95.40], [29.807, -95.33], [29.77, -95.29], [29.73, -95.29], [29.69, -95.33], [29.678, -95.40], [29.69, -95.45], [29.74, -95.47], [29.805, -95.45]], s).addTo(map);
+    L.circle([29.745, -95.42], { radius: 21000, color: '#CFC7B8', weight: 2, fill: false, interactive: false }).addTo(map);
+    L.polyline([[29.786, -95.85], [29.77, -95.37], [29.76, -95.0]], s).addTo(map);
+    L.polyline([[30.17, -95.46], [29.77, -95.36], [29.55, -95.12]], s).addTo(map);
+    L.polyline([[29.62, -95.63], [29.73, -95.42], [29.78, -95.35], [30.0, -95.27]], s).addTo(map);
+    DISTRICTS.forEach((d) => L.marker([d.lat + 0.012, d.lng], { interactive: false, icon: L.divIcon({ className: 'dlabel', html: esc(d.name), iconSize: null }) }).addTo(map));
+    const note = document.getElementById('mapNote'); if (note) note.hidden = false;
+  }
+  drawPins(true);
+}
+function drawPins(fit) {
+  if (!map) return;
+  if (layer) map.removeLayer(layer);
+  layer = L.layerGroup().addTo(map); markers = {};
+  const items = filtered();
+  items.forEach((r) => {
+    const m = L.marker([r.lat, r.lng], { title: r.name, keyboard: true, icon: L.divIcon({ className: '', html: `<div class="pin${r.founding ? ' fp' : ''}${ui.hl === r.id ? ' hot' : ''}"></div>`, iconSize: [22, 22], iconAnchor: [11, 11] }) });
+    m.bindTooltip(`<b>${esc(r.name)}</b><br>${esc(r.offer)}`, { direction: 'top', offset: [0, -10] });
+    m.on('click', () => openDrawer(r.id));
+    m.addTo(layer); markers[r.id] = m;
+  });
+  if (ui.here) L.circleMarker([ui.here.lat, ui.here.lng], { radius: 8, color: '#172A2A', fillColor: '#F2B134', fillOpacity: 1, weight: 3 }).addTo(layer).bindTooltip('You are here');
+  if (fit && items.length) map.fitBounds(L.latLngBounds(items.map((r) => [r.lat, r.lng])).pad(0.2), { maxZoom: 14 });
+}
+function highlight(id) {
+  ui.hl = id;
+  document.querySelectorAll('.rc').forEach((c) => c.classList.toggle('hl', c.dataset.rid === id));
+  Object.entries(markers).forEach(([rid, m]) => { const el = m.getElement && m.getElement(); if (el && el.firstChild) el.firstChild.classList.toggle('hot', rid === id); if (rid === id) m.setZIndexOffset(1000); else m.setZIndexOffset(0); });
+}
+function refreshResults(fit) {
+  const list = document.getElementById('list');
+  if (list) list.innerHTML = renderList();
+  const head = document.querySelector('.results-head p');
+  if (head) { const n = filtered().length; head.innerHTML = `<b class="tabular">${n}</b> restaurant${n === 1 ? '' : 's'} ${ui.here ? 'near you' : 'found'}${ui.districts.length ? ' in ' + ui.districts.map((d) => esc(D[d].name)).join(', ') : ''}`; }
+  drawPins(fit);
+}
+
+// ---------- Drawer ----------
+function openDrawer(id) {
+  const r = RESTAURANTS.find((x) => x.id === id); if (!r) return;
+  const d = D[r.district];
+  $('#drawerRoot').innerHTML = `<div class="scrim" data-act="closeDrawer"><div class="drawer" role="dialog" aria-modal="true" aria-labelledby="dTitle">
+    <button class="x" data-act="closeDrawer" aria-label="Close">\u00D7</button>
+    <p class="eyebrow">${esc(r.cuisine)} \u00B7 ${'$'.repeat(r.price)}</p>
+    <h2 id="dTitle">${esc(r.name)}</h2>
+    <p class="muted" style="display:flex; gap:6px; align-items:center">${I.pin}${esc(d.name)}</p>
+    <p style="font-size:19px; color: var(--ink-2)">${esc(r.desc)}</p>
+    <div class="card" style="gap:8px"><p class="eyebrow">Member offer</p><p style="font-family: var(--f-display); font-weight:800; font-size:30px; line-height:1.1">${esc(r.offer)}</p><p class="small muted">Show your live pass before you pay. Alcohol excluded. Not combined with other offers.</p></div>
+    <div class="badges">${r.isNew ? `<span class="badge new">${I.star}New</span>` : ''}${r.founding ? `<span class="badge fp">${I.star}Founding partner</span>` : ''}<span class="badge">${I.dine}Dine-in</span>${r.pickup ? `<span class="badge">${I.pickup}Pickup</span>` : ''}</div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap">${member ? '<a class="btn pri" href="#pass" data-go="pass">Show my pass</a>' : '<a class="btn pri" href="#join" data-go="join">Join to use this offer</a>'}<button class="btn" data-act="closeDrawer">Back to results</button></div>
+    <p class="sample">Sample listing. Real partners, addresses and hours will be announced before launch.</p>
+  </div></div>`;
+  highlight(id);
+  const x = document.querySelector('.drawer .x'); if (x) x.focus();
+}
+function closeDrawer() { $('#drawerRoot').innerHTML = ''; }
+
+// ---------- Router ----------
+const VIEWS = { home: vHome, how: vHow, restaurants: vRestaurants, join: vJoin, pass: vPass, partners: vPartners, faq: vFaq, conduct: vConduct };
+let view = 'home', clockTimer = null;
+function go(name, anchor) {
+  view = VIEWS[name] ? name : 'home';
+  if (map) { map.remove(); map = null; }
+  $('#app').innerHTML = VIEWS[view]();
+  document.querySelectorAll('.nav a').forEach((a) => a.classList.toggle('on', a.dataset.go === view));
+  $('#signinBtn').textContent = member ? 'My pass' : 'Sign in';
+  if (location.hash !== '#' + view) { try { history.replaceState(null, '', '#' + view); } catch (e) { /* ignore */ } }
+  if (view === 'restaurants') setTimeout(mountMap, 0);
+  startClock();
+  const target = anchor && document.getElementById(anchor);
+  if (target) target.scrollIntoView({ behavior: 'smooth' }); else window.scrollTo(0, 0);
+}
+function startClock() {
+  clearInterval(clockTimer);
+  const tick = () => {
+    const now = new Date();
+    document.querySelectorAll('[data-clock]').forEach((el) => (el.textContent = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' })));
+    document.querySelectorAll('[data-date]').forEach((el) => (el.textContent = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })));
+  };
+  tick();
+  if (document.querySelector('[data-clock]')) clockTimer = setInterval(tick, 1000);
+}
+
+// ---------- Events ----------
+document.addEventListener('click', (e) => {
+  const t = e.target.closest('a, button, .scrim');
+  if (!t) return;
+  const d = t.dataset;
+  if (d.act === 'closeDrawer') { if (t.classList.contains('scrim') && e.target !== t) return; e.preventDefault(); return closeDrawer(); }
+  if (d.go) { e.preventDefault(); closeDrawer(); if (d.plan) { ui.plan = d.plan; ui.joined = false; } return go(d.go, d.anchor || (d.go === 'join' && d.plan ? 'checkout' : null)); }
+  if (d.open) return openDrawer(d.open);
+  if (d.district) { ui.districts = ui.districts.includes(d.district) ? ui.districts.filter((x) => x !== d.district) : [...ui.districts, d.district]; t.classList.toggle('on'); t.setAttribute('aria-pressed', ui.districts.includes(d.district)); return refreshResults(true); }
+  if (d.mode) { ui.mode = d.mode; document.querySelectorAll('[data-mode]').forEach((b) => { b.classList.toggle('on', b.dataset.mode === ui.mode); b.setAttribute('aria-pressed', b.dataset.mode === ui.mode); }); return refreshResults(true); }
+  if (d.planPick) { ui.plan = d.planPick; ui.joined = false; go('join', 'checkout'); return; }
+  switch (d.act) {
+    case 'clear': ui.districts = []; ui.cuisine = ''; ui.q = ''; ui.mode = 'dine'; ui.sort = 'new'; return go('restaurants');
+    case 'toggleFilters': ui.filtersOpen = !ui.filtersOpen; document.querySelector('.panel').classList.toggle('collapsed', !ui.filtersOpen); return;
+    case 'locate':
+      if (!navigator.geolocation) return toast('Location isn\u2019t available here. Pick a neighborhood instead.');
+      navigator.geolocation.getCurrentPosition((pos) => { ui.here = { lat: pos.coords.latitude, lng: pos.coords.longitude }; ui.sort = 'near'; go('restaurants'); }, () => toast('Location isn\u2019t available here. Pick a neighborhood instead.'), { timeout: 6000 });
+      return;
+    case 'signout':
+    case 'signoutAll':
+      if (AUTH_LIVE) { sb.auth.signOut(d.act === 'signoutAll' ? { scope: 'global' } : undefined).catch(() => {}); }
+      member = null; store.set('member', null); auth.step = 'email'; auth.msg = null;
+      toast(d.act === 'signoutAll' ? 'Signed out on all devices' : 'Signed out'); return go('pass');
+    case 'oauth':
+      if (!AUTH_LIVE) return;
+      if (view === 'join') setReturnTo({ view: 'join', anchor: 'checkout', plan: ui.plan });
+      sb.auth.signInWithOAuth({ provider: d.provider, options: { redirectTo: location.origin + location.pathname } }).then(({ error }) => { if (error) toast('That sign-in option isn\u2019t available right now. Try email instead.'); });
+      return;
+    case 'resendCode': return sendCode(auth.email, '', false);
+    case 'changeEmail': auth.step = 'email'; auth.msg = null; return renderAuth();
+    case 'checkout': return startCheckout();
+    case 'portal': return openPortal();
+    case 'copyGift':
+      if (navigator.clipboard) navigator.clipboard.writeText(d.code).then(() => toast('Gift code copied'), () => toast('Gift code: ' + d.code));
+      else toast('Gift code: ' + d.code);
+      return;
+    case 'delAsk': billing.delStep = 1; billing.delMsg = null; rerender(); { const i = document.getElementById('delConfirm'); if (i) i.focus(); } return;
+    case 'delCancel': billing.delStep = 0; billing.delMsg = null; return rerender();
+    case 'share': {
+      const link = 'FoodiePass referral: ' + (member ? member.code : '');
+      if (navigator.clipboard) navigator.clipboard.writeText(link).then(() => toast('Referral code copied'), () => toast('Your referral code: ' + member.code));
+      else toast('Your referral code: ' + member.code);
+      return;
+    }
+    case 'report': return toast('Thanks. In the live app this opens a short form and we follow up with the restaurant.');
+  }
+});
+document.addEventListener('mouseover', (e) => { const c = e.target.closest('.rc'); if (c && view === 'restaurants' && ui.hl !== c.dataset.rid) highlight(c.dataset.rid); });
+document.addEventListener('change', (e) => {
+  if (e.target.id === 'cuisineSel') { ui.cuisine = e.target.value; refreshResults(true); }
+  if (e.target.id === 'sortSel') { ui.sort = e.target.value; if (ui.sort === 'near' && !ui.here) toast('Tap \u201CUse my location\u201D to sort by distance.'); refreshResults(false); }
+});
+document.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const f = e.target;
+  if (f.id === 'searchForm') { ui.q = $('#q').value.trim(); return refreshResults(true); }
+  if (f.id === 'insiderForm') { f.outerHTML = '<p style="font-weight:700; font-size:20px">Thanks! You\u2019re on the Insider list. (Preview only: nothing was sent.)</p>'; return; }
+  if (f.id === 'joinForm') {
+    if (ui.plan === 'member') { member = { name: $('#jName').value.trim(), since: Date.now(), code: 'FP-' + Math.random().toString(36).slice(2, 7).toUpperCase() }; store.set('member', member); ui.joined = true; toast('Welcome to FoodiePass'); return go('join', 'checkout'); }
+    toast(ui.plan === 'gift' ? 'Gift preview: in the live site this goes to payment.' : 'Thanks! We\u2019ll be in touch within two business days. (Preview only)');
+    return;
+  }
+  if (f.id === 'signinForm') { member = { name: $('#sName').value.trim(), since: Date.now(), code: 'FP-' + Math.random().toString(36).slice(2, 7).toUpperCase() }; store.set('member', member); return go('pass'); }
+  if (f.id === 'partnerForm') { ui.partnerSent = true; return go('partners'); }
+  if (f.id === 'authEmailForm') {
+    if (view === 'join') setReturnTo({ view: 'join', anchor: 'checkout', plan: ui.plan });
+    const n = document.getElementById('authName'), m = document.getElementById('authMarketing');
+    return sendCode($('#authEmail').value.trim().toLowerCase(), n ? n.value.trim() : '', m ? m.checked : false);
+  }
+  if (f.id === 'authCodeForm') return verifyCode($('#authCode').value);
+  if (f.id === 'giftForm') { const c = $('#giftCode').value.trim(); if (c) redeemGift(c); return; }
+  if (f.id === 'deleteForm') return deleteAccount($('#delConfirm').value.trim());
+});
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && $('#drawerRoot').innerHTML) closeDrawer(); });
+
+const start = (location.hash || '').replace('#', '');
+go(VIEWS[start] ? start : 'home');
+
+if (AUTH_LIVE) {
+  // Provider errors come back in the URL (e.g. the person cancelled Google sign-in).
+  const qp = new URLSearchParams(location.search);
+  if (qp.get('error_description') || qp.get('error')) { toast('Sign-in was cancelled or failed. Try again or use email.'); }
+  // Returns from Stripe: ?checkout=success&attempt=<id>, ?checkout=canceled, ?portal=return
+  const checkoutResult = qp.get('checkout'), checkoutAttempt = qp.get('attempt'), portalReturn = qp.get('portal');
+  const configReady = loadBillingConfig();
+  sb.auth.getSession().then(async ({ data }) => {
+    await configReady;
+    const signedIn = !!(data && data.session);
+    member = memberFromUser(signedIn ? data.session.user : null);
+    if (location.search) { try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) { /* ignore */ } }
+    if (signedIn && checkoutResult === 'success') { view = 'pass'; return confirmCheckout(checkoutAttempt); }
+    if (checkoutResult === 'canceled') toast('Checkout cancelled. You weren\u2019t charged.');
+    if (signedIn && (function () { try { return localStorage.getItem(RETURN_KEY); } catch (e) { return null; } })()) { await loadStatus(); return afterSignIn(); }
+    refreshChrome();
+    if (signedIn) await loadStatus();
+    if (portalReturn) toast('Billing updated.');
+    if (view === 'pass' || view === 'join') go(view, view === 'join' && member ? 'checkout' : null);
+  });
+  sb.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_OUT') { member = null; billing.status = null; refreshChrome(); return; }
+    if (session && session.user) {
+      const wasIn = !!member, prev = member;
+      member = memberFromUser(session.user);
+      if (prev && prev.id === member.id) member.membershipActive = prev.membershipActive; // keep status across token refreshes
+      // In link mode the sign-in can arrive from another tab (where the email link was opened).
+      if (!wasIn && event === 'SIGNED_IN' && (auth.step !== 'code' || AUTH_CONFIG.emailMode === 'link')) {
+        auth.step = 'email'; auth.msg = null; clearTimeout(auth.timer);
+        configReady.then(loadStatus).then(afterSignIn);
+      } else refreshChrome();
+    }
+  });
+}
+</script>
