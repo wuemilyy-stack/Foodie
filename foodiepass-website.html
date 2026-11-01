@@ -286,7 +286,7 @@ footer a:hover { color: var(--linen); text-decoration: underline; }
       </div>
     </div>
     <div class="foot-bottom">
-      <span>&#xA9; 2026 FoodiePass &#xB7; Houston, Texas &#xB7; Restaurant listings shown are samples until launch. &#xB7; v0.2.0</span>
+      <span>&#xA9; 2026 FoodiePass &#xB7; Houston, Texas &#xB7; Restaurant listings shown are samples until launch. &#xB7; v0.2.1</span>
       <span><a href="#conduct" data-go="conduct" data-anchor="terms">Terms</a> &#xB7; <a href="#conduct" data-go="conduct" data-anchor="privacy">Privacy</a></span>
     </div>
   </div>
@@ -750,13 +750,13 @@ const I = {
 };
 
 // ---------- Pages ----------
-function passCard(name, until) {
-  return `<div class="pass" aria-label="Sample member pass">
-    <div class="pass-top"><span class="eyebrow">Member pass</span><span class="pass-live"><span class="pulse"></span>Live</span></div>
-    <p class="pass-name">${esc(name)}</p>
-    <div class="pass-clock tabular" data-clock>--:--:--</div>
-    <div class="pass-row"><div><p class="k">Valid through</p><p class="v">${esc(until)}</p></div><div style="text-align:right"><p class="k">Today</p><p class="v" data-date>\u2014</p></div></div>
-    <p class="small muted">The moving clock shows staff the pass is live, not a screenshot.</p>
+// Home hero: sample offers only. The member pass itself appears only for paid members (see My pass).
+function heroOffers() {
+  const picks = RESTAURANTS.filter((r) => r.founding).slice(0, 3);
+  return `<div class="pass" aria-label="Sample member offers">
+    <div class="pass-top"><span class="eyebrow">Member offers</span><span class="small muted">Samples</span></div>
+    ${picks.map((r) => `<div class="pass-row" style="flex-direction:column; gap:2px"><p class="v">${esc(r.name)}</p><p class="small muted">${esc(D[r.district].name)} \u00b7 ${esc(r.offer)}</p></div>`).join('')}
+    <a class="btn pri" href="#join" data-go="join">Join to unlock your pass</a>
   </div>`;
 }
 
@@ -799,7 +799,7 @@ function vHome() {
       <p class="lede">A deal at every partner restaurant across the city. Pays for itself in about five dinners.</p>
       <div class="ctas"><a class="btn pri" href="#join" data-go="join">Join for $30 a year</a><a class="btn ghost-light" href="#restaurants" data-go="restaurants">Find restaurants</a><a class="link" href="#partners" data-go="partners">Restaurants join free \u2192</a></div>
     </div>
-    ${passCard('[Member Name]', 'Nov 2027')}
+    ${heroOffers()}
   </div></section>
 
   <section><div class="wrap">
