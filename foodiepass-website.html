@@ -91,6 +91,10 @@ section { padding-block: 72px; }
 .pass-row .v { font-size: 19px; font-weight: 700; }
 .pass-clock { font-family: var(--f-display); font-size: 44px; font-weight: 800; text-align: center; letter-spacing: -0.02em; padding: 10px; border-radius: 16px; background: var(--sand); }
 .pulse { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--ok); margin-right: 6px; }
+.swipe { position: relative; height: 64px; border-radius: 999px; background: var(--bayou); color: var(--linen); display: flex; align-items: center; justify-content: center; overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none; }
+.swipe-label { font-weight: 700; pointer-events: none; padding-left: 40px; }
+.swipe-knob { position: absolute; left: 6px; top: 6px; width: 52px; height: 52px; border-radius: 50%; border: 0; background: var(--mustard); color: var(--bayou); font-size: 24px; font-weight: 800; cursor: grab; touch-action: none; }
+.swipe-knob:active { cursor: grabbing; }
 @media (prefers-reduced-motion: no-preference) { .pulse { animation: pulse 1.6s ease-in-out infinite; } @keyframes pulse { 50% { opacity: 0.25; } } }
 
 /* Grids, cards */
@@ -282,7 +286,7 @@ footer a:hover { color: var(--linen); text-decoration: underline; }
       </div>
     </div>
     <div class="foot-bottom">
-      <span>&#xA9; 2026 FoodiePass &#xB7; Houston, Texas &#xB7; Restaurant listings shown are samples until launch. &#xB7; v0.1.0</span>
+      <span>&#xA9; 2026 FoodiePass &#xB7; Houston, Texas &#xB7; Restaurant listings shown are samples until launch. &#xB7; v0.2.0</span>
       <span><a href="#conduct" data-go="conduct" data-anchor="terms">Terms</a> &#xB7; <a href="#conduct" data-go="conduct" data-anchor="privacy">Privacy</a></span>
     </div>
   </div>
@@ -538,6 +542,92 @@ function accountPanel() {
     </div>`}
   </div></section>`;
 }
+// ---------- Member pass: paid members only, opened for one restaurant, closed by a staff swipe ----------
+const PASS_MINUTES = 15;
+const VISIT_KEY = 'fp-visit';
+let visit = (() => { try { return JSON.parse(sessionStorage.getItem(VISIT_KEY)); } catch (e) { return null; } })();
+function saveVisit() { try { if (visit) sessionStorage.setItem(VISIT_KEY, JSON.stringify(visit)); else sessionStorage.removeItem(VISIT_KEY); } catch (e) { /* ignore */ } }
+const isPaid = () => !!member && (member.live ? !!member.membershipActive : true);
+const visitLeft = () => (visit ? PASS_MINUTES * 60000 - (Date.now() - visit.openedAt) : 0);
+const visitExpired = () => !!visit && !visit.confirmedAt && visitLeft() <= 0;
+function openVisit(rid) {
+  closeDrawer();
+  if (!isPaid()) return go('pass');
+  visit = { rid, openedAt: Date.now(), confirmedAt: null, code: null };
+  saveVisit();
+  go('pass');
+}
+function endVisit() { visit = null; saveVisit(); go('pass'); }
+function visitCode() { const a = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; return Array.from(crypto.getRandomValues(new Uint8Array(6)), (x) => a[x % a.length]).join(''); }
+async function confirmVisit() {
+  if (!visit || visit.confirmedAt || visitExpired()) return;
+  visit.confirmedAt = Date.now(); visit.code = visitCode(); saveVisit();
+  if (navigator.vibrate) navigator.vibrate(60);
+  go('pass');
+  if (AUTH_LIVE && member && member.live) {
+    const r = RESTAURANTS.find((x) => x.id === visit.rid);
+    try {
+      const { error } = await sb.from('redemptions').insert({ restaurant_id: visit.rid, restaurant_name: r ? r.name : null, offer: r ? r.offer : null, code: visit.code, opened_at: new Date(visit.openedAt).toISOString(), confirmed_at: new Date(visit.confirmedAt).toISOString() });
+      if (error) console.warn('FoodiePass: visit not recorded', error);
+    } catch (e) { console.warn('FoodiePass: visit not recorded', e); }
+  }
+}
+function passList() {
+  const q = (ui.passQ || '').toLowerCase();
+  const items = RESTAURANTS.filter((r) => !q || (r.name + ' ' + r.cuisine + ' ' + D[r.district].name).toLowerCase().includes(q)).sort((a, b) => a.name.localeCompare(b.name));
+  if (!items.length) return '<div class="card"><h3>No match</h3><p>Check the spelling, or search by neighborhood or cuisine.</p></div>';
+  return items.map((r) => `<div class="rc" style="flex-direction:row; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap"><div style="display:grid; gap:4px; min-width:0"><h3 style="font-size:21px">${esc(r.name)}</h3><p class="small muted">${esc(D[r.district].name)} \u00b7 ${esc(r.offer)}</p></div><button class="btn pri sm" data-usepass="${r.id}">I\u2019m here</button></div>`).join('');
+}
+function vVisit(until) {
+  const r = RESTAURANTS.find((x) => x.id === visit.rid);
+  const done = !!visit.confirmedAt;
+  let body;
+  if (done) {
+    body = `<div class="pass" style="max-width:none; background:#DDEFE3">
+      <div class="pass-top"><span class="eyebrow" style="color:#1F4D35">Confirmed by staff</span><span class="pass-live">\u2713 Used</span></div>
+      <p class="pass-name">${esc(member.name)}</p>
+      <p style="font-size:22px; font-weight:700">Apply: ${esc(r.offer)}</p>
+      <div class="pass-row"><div><p class="k">Confirmed at</p><p class="v">${new Date(visit.confirmedAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</p></div><div style="text-align:right"><p class="k">Visit code</p><p class="v tabular">${esc(visit.code)}</p></div></div>
+      <p class="small muted">This pass has been used for this visit. Enjoy your meal.</p>
+    </div>`;
+  } else if (visitExpired()) {
+    body = `<div class="card"><h3>This pass timed out</h3><p>A pass stays open for ${PASS_MINUTES} minutes. Open it again when you\u2019re ready to pay.</p><button class="btn pri" data-usepass="${r.id}" style="align-self:flex-start">Open pass again</button></div>`;
+  } else {
+    body = `<div class="pass" style="max-width:none">
+      <div class="pass-top"><span class="eyebrow">Member pass</span><span class="pass-live"><span class="pulse"></span>Live</span></div>
+      <p class="pass-name">${esc(member.name)}</p>
+      <p style="font-size:22px; font-weight:700">${esc(r.offer)}</p>
+      <div class="pass-clock tabular" data-clock>--:--:--</div>
+      <div class="pass-row"><div><p class="k">Member through</p><p class="v">${esc(until.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }))}</p></div><div style="text-align:right"><p class="k">Pass closes in</p><p class="v tabular" data-countdown>--:--</p></div></div>
+      <div class="swipe" id="swipe" role="group" aria-label="Staff confirmation"><span class="swipe-label">Staff: swipe to confirm \u2192</span><button type="button" class="swipe-knob" id="swipeKnob" aria-label="Staff: slide right, or press Enter, to confirm this pass">\u2192</button></div>
+      <p class="small muted">For restaurant staff. Swiping confirms the member showed this pass, and closes it.</p>
+    </div>`;
+  }
+  return `<section><div class="wrap" style="max-width:640px">
+    <div class="sec-head" style="margin-bottom:20px"><p class="eyebrow">Member pass \u00b7 ${esc(D[r.district].name)}</p><h1 style="font-size: clamp(34px, 5vw, 52px)">${esc(r.name)}</h1></div>
+    ${body}
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:18px"><button class="btn" data-act="endVisit">${done ? 'Done' : 'Choose a different restaurant'}</button><button class="btn" data-act="report">Report a problem</button></div>
+  </div></section>`;
+}
+// Staff swipe: drag the knob across the track (or focus it and press Enter).
+let drag = null;
+document.addEventListener('pointerdown', (e) => {
+  const k = e.target.closest && e.target.closest('#swipeKnob'); if (!k) return;
+  const track = document.getElementById('swipe');
+  drag = { k, startX: e.clientX, max: track.clientWidth - k.offsetWidth - 12, dx: 0 };
+  try { k.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+  e.preventDefault();
+});
+document.addEventListener('pointermove', (e) => { if (!drag) return; drag.dx = Math.max(0, Math.min(drag.max, e.clientX - drag.startX)); drag.k.style.transform = 'translateX(' + drag.dx + 'px)'; });
+function endDrag() {
+  if (!drag) return; const d = drag; drag = null;
+  if (d.dx >= d.max * 0.85) { d.k.style.transform = 'translateX(' + d.max + 'px)'; confirmVisit(); }
+  else { d.k.style.transition = 'transform .2s'; d.k.style.transform = 'translateX(0)'; setTimeout(() => { d.k.style.transition = ''; }, 220); }
+}
+document.addEventListener('pointerup', endDrag);
+document.addEventListener('pointercancel', endDrag);
+document.addEventListener('keydown', (e) => { if (e.target && e.target.id === 'swipeKnob' && e.key === 'Enter') { e.preventDefault(); confirmVisit(); } });
+document.addEventListener('input', (e) => { if (e.target.id === 'passQ') { ui.passQ = e.target.value; const l = document.getElementById('passList'); if (l) l.innerHTML = passList(); } });
 function memberFromUser(u) {
   if (!u) return null;
   const md = u.user_metadata || {};
@@ -884,16 +974,26 @@ function vPass() {
   }
   const accessUntil = billing.status && billing.status.membership && billing.status.membership.access_until;
   const until = accessUntil ? new Date(accessUntil) : new Date(member.since); if (!accessUntil) until.setFullYear(until.getFullYear() + 1);
-  const pending = member.live && !member.membershipActive;
+  const paid = isPaid();
   const notice = billing.confirming ? '<div class="note" role="status" style="margin-top:14px"><b>Confirming your membership\u2026</b> This usually takes a few seconds.</div>'
     : billing.msg ? `<div class="note" role="status" style="margin-top:14px">${esc(billing.msg)}</div>` : '';
-  return `<section><div class="wrap band">
-    <div class="sec-head" style="margin:0"><p class="eyebrow">My pass</p><h1 style="font-size: clamp(40px, 5.4vw, 60px)">${pending ? 'Your account is verified' : 'Show this before you pay'}</h1>
-      <p>${pending ? `Signed in as <b>${esc(member.email)}</b>. Your pass goes live once your $30 membership is active.` : 'Your server applies the restaurant\u2019s offer. Keep the screen open so they can see the clock moving.'}</p>${notice}
-      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px">${pending ? '<a class="btn pri" href="#join" data-go="join" data-plan="member">Activate membership</a>' : ''}<a class="btn" href="#restaurants" data-go="restaurants">Find a restaurant</a><button class="btn" data-act="share">Copy my referral link</button><button class="btn" data-act="report">Report a problem</button><button class="btn" data-act="signout">Sign out</button>${member.live ? '<button class="btn" data-act="signoutAll">Sign out on all devices</button>' : ''}</div>
-      <p class="small muted" style="margin-top:12px">Refer a friend: you both get two extra months.${pending ? ' The pass shown is a preview.' : ''}</p>
-    </div>
-    ${passCard(member.name, until.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }))}
+  const tools = `<div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px">${paid ? '' : '<a class="btn pri" href="#join" data-go="join" data-plan="member">Activate membership</a>'}<button class="btn" data-act="share">Copy my referral link</button><button class="btn" data-act="signout">Sign out</button>${member.live ? '<button class="btn" data-act="signoutAll">Sign out on all devices</button>' : ''}</div>`;
+  // No pass until the membership is paid.
+  if (!paid) {
+    return `<section><div class="wrap band">
+      <div class="sec-head" style="margin:0"><p class="eyebrow">My pass</p><h1 style="font-size: clamp(40px, 5.4vw, 60px)">Your account is verified</h1>
+        <p>Signed in as <b>${esc(member.email)}</b>. Your member pass appears here once your $30 membership is active.</p>${notice}${tools}</div>
+      <div class="card"><h3>How the pass works</h3><p>At the restaurant, open My pass and tap the place you\u2019re eating. Show the screen before you pay. A staff member swipes to confirm, and the pass closes for that visit.</p></div>
+    </div></section>${accountPanel()}`;
+  }
+  // A pass is open for one restaurant.
+  if (visit && RESTAURANTS.some((r) => r.id === visit.rid)) return vVisit(until);
+  // Paid, no pass open: pick the restaurant first.
+  return `<section><div class="wrap">
+    <div class="sec-head"><p class="eyebrow">My pass</p><h1 style="font-size: clamp(40px, 5.4vw, 60px)">Where are you eating?</h1>
+      <p>Tap the restaurant when you\u2019re ready to pay. Your pass opens for ${PASS_MINUTES} minutes and closes once staff confirm it. Member through ${esc(until.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }))}.</p>${notice}${tools}</div>
+    <form id="passSearch" class="searchbar" role="search" style="margin-top:0"><label for="passQ" style="position:absolute; left:-9999px">Search restaurants</label><input id="passQ" value="${esc(ui.passQ || '')}" placeholder="Search by name, cuisine or neighborhood" autocomplete="off"></form>
+    <div class="list" id="passList" style="margin-top:18px">${passList()}</div>
   </div></section>${accountPanel()}`;
 }
 
@@ -1049,7 +1149,7 @@ function openDrawer(id) {
     <p style="font-size:19px; color: var(--ink-2)">${esc(r.desc)}</p>
     <div class="card" style="gap:8px"><p class="eyebrow">Member offer</p><p style="font-family: var(--f-display); font-weight:800; font-size:30px; line-height:1.1">${esc(r.offer)}</p><p class="small muted">Show your live pass before you pay. Alcohol excluded. Not combined with other offers.</p></div>
     <div class="badges">${r.isNew ? `<span class="badge new">${I.star}New</span>` : ''}${r.founding ? `<span class="badge fp">${I.star}Founding partner</span>` : ''}<span class="badge">${I.dine}Dine-in</span>${r.pickup ? `<span class="badge">${I.pickup}Pickup</span>` : ''}</div>
-    <div style="display:flex; gap:10px; flex-wrap:wrap">${member ? '<a class="btn pri" href="#pass" data-go="pass">Show my pass</a>' : '<a class="btn pri" href="#join" data-go="join">Join to use this offer</a>'}<button class="btn" data-act="closeDrawer">Back to results</button></div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap">${!member ? '<a class="btn pri" href="#join" data-go="join">Join to use this offer</a>' : isPaid() ? `<button class="btn pri" data-usepass="${r.id}">I\u2019m here: open my pass</button>` : '<a class="btn pri" href="#pass" data-go="pass">Activate my pass</a>'}<button class="btn" data-act="closeDrawer">Back to results</button></div>
     <p class="sample">Sample listing. Real partners, addresses and hours will be announced before launch.</p>
   </div></div>`;
   highlight(id);
@@ -1078,6 +1178,12 @@ function startClock() {
     const now = new Date();
     document.querySelectorAll('[data-clock]').forEach((el) => (el.textContent = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' })));
     document.querySelectorAll('[data-date]').forEach((el) => (el.textContent = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })));
+    const cd = document.querySelector('[data-countdown]');
+    if (cd && visit && !visit.confirmedAt) {
+      const left = visitLeft();
+      if (left <= 0) { clearInterval(clockTimer); return go('pass'); }
+      const s = Math.ceil(left / 1000); cd.textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+    }
   };
   tick();
   if (document.querySelector('[data-clock]')) clockTimer = setInterval(tick, 1000);
@@ -1094,7 +1200,9 @@ document.addEventListener('click', (e) => {
   if (d.district) { ui.districts = ui.districts.includes(d.district) ? ui.districts.filter((x) => x !== d.district) : [...ui.districts, d.district]; t.classList.toggle('on'); t.setAttribute('aria-pressed', ui.districts.includes(d.district)); return refreshResults(true); }
   if (d.mode) { ui.mode = d.mode; document.querySelectorAll('[data-mode]').forEach((b) => { b.classList.toggle('on', b.dataset.mode === ui.mode); b.setAttribute('aria-pressed', b.dataset.mode === ui.mode); }); return refreshResults(true); }
   if (d.planPick) { ui.plan = d.planPick; ui.joined = false; go('join', 'checkout'); return; }
+  if (d.usepass) { e.preventDefault(); return openVisit(d.usepass); }
   switch (d.act) {
+    case 'endVisit': return endVisit();
     case 'clear': ui.districts = []; ui.cuisine = ''; ui.q = ''; ui.mode = 'dine'; ui.sort = 'new'; return go('restaurants');
     case 'toggleFilters': ui.filtersOpen = !ui.filtersOpen; document.querySelector('.panel').classList.toggle('collapsed', !ui.filtersOpen); return;
     case 'locate':
@@ -1104,7 +1212,7 @@ document.addEventListener('click', (e) => {
     case 'signout':
     case 'signoutAll':
       if (AUTH_LIVE) { sb.auth.signOut(d.act === 'signoutAll' ? { scope: 'global' } : undefined).catch(() => {}); }
-      member = null; store.set('member', null); auth.step = 'email'; auth.msg = null;
+      member = null; store.set('member', null); auth.step = 'email'; auth.msg = null; visit = null; saveVisit();
       toast(d.act === 'signoutAll' ? 'Signed out on all devices' : 'Signed out'); return go('pass');
     case 'oauth':
       if (!AUTH_LIVE) return;
@@ -1139,6 +1247,7 @@ document.addEventListener('submit', (e) => {
   e.preventDefault();
   const f = e.target;
   if (f.id === 'searchForm') { ui.q = $('#q').value.trim(); return refreshResults(true); }
+  if (f.id === 'passSearch') return;
   if (f.id === 'insiderForm') { f.outerHTML = '<p style="font-weight:700; font-size:20px">Thanks! You\u2019re on the Insider list. (Preview only: nothing was sent.)</p>'; return; }
   if (f.id === 'joinForm') {
     if (ui.plan === 'member') { member = { name: $('#jName').value.trim(), since: Date.now(), code: 'FP-' + Math.random().toString(36).slice(2, 7).toUpperCase() }; store.set('member', member); ui.joined = true; toast('Welcome to FoodiePass'); return go('join', 'checkout'); }
